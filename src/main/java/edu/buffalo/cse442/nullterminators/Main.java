@@ -10,7 +10,6 @@ public class Main extends Application {
 
     static void runMe(String[] args) {
         launch(args);
-        System.out.println("HI");
     }
 
     @Override
