@@ -23,7 +23,7 @@
            <Button fx:id = "month_after" mnemonicParsing="false" text="&gt;" />
        </items>
     </ToolBar>
-    <AnchorPane prefHeight="100.0" prefWidth="640.0">
+    <AnchorPane minHeight = "25.0" maxHeight="100.0" prefWidth="640.0">
         <children>
             <GridPane gridLinesVisible="true" prefHeight="30.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <columnConstraints>
