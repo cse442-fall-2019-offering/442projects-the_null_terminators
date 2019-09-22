@@ -16,7 +16,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         primaryStage.setTitle("Calendar Application");
-        Scene scene = new Scene(root, 1280, 720);
+        primaryStage.setMaxHeight(800);
+        primaryStage.setMaxWidth(1600);
+        primaryStage.setMinHeight(500);
+        primaryStage.setMinWidth(800);
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("main_style.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.show();
