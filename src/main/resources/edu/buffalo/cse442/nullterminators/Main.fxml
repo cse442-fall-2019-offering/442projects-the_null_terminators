@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToolBar?>
+<?import java.lang.String?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -21,7 +22,10 @@
            <Button fx:id = "month_before" mnemonicParsing="false" text="&lt;" />
            <Button fx:id = "today" mnemonicParsing="false" text="TODAY" />
            <Button fx:id = "month_after" mnemonicParsing="false" text="&gt;" />
-       </items>
+            <Button fx:id="weekViewButton" layoutX="8.0" layoutY="358.0" mnemonicParsing="false" text="Week View" />
+            <Button fx:id="dayViewButton" layoutX="92.0" layoutY="358.0" mnemonicParsing="false" text="Day View" />
+            <Button fx:id="monthViewButton" layoutX="166.0" layoutY="358.0" mnemonicParsing="false" text="Month View" />
+        </items>
     </ToolBar>
     <AnchorPane prefHeight="100.0" prefWidth="640.0">
         <children>
