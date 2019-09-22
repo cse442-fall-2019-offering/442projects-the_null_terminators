@@ -44,6 +44,8 @@ public class MainWindow {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Switching to month after..");
+            }
+        });
 
         weekViewButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -64,5 +66,4 @@ public class MainWindow {
             }
         });
     }
-
 }

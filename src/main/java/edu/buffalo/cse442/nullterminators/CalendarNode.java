@@ -79,9 +79,9 @@ public class CalendarNode extends GridPane {
         setDateRange(viewOfCalendar);
     }
 
-    public CalendarNode(@NamedArg("view") String view) {
+    public CalendarNode() {
         super();
-        changeView(VIEW.valueOf(view));
+        changeView(VIEW.MONTH);
         this.setStyle("-fx-background-fill: black, white; -fx-background-insets: 0, 1 ;");
     }
 }
