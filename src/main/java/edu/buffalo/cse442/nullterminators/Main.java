@@ -6,24 +6,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class Main extends Application {
 
-    public static void main(String[] args) {
+    static void runMe(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        Parent root = null;
-        try {
-            root = FXMLLoader.load(getClass().getResource("Main.fxml"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        Scene scene = new Scene(root);
+    public void start(Stage primaryStage) throws Exception{
+        Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
+        primaryStage.setTitle("Calendar Application");
+        Scene scene = new Scene(root, 1280, 720);
+        scene.getStylesheets().add(getClass().getResource("main_style.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.show();
 
