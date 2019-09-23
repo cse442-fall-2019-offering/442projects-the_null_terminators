@@ -21,7 +21,7 @@ public class DateNode extends AnchorPane {
         add_event.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // TODO: Add link to Event Adder UI.
+                new EventWindow().createEEWindow();
             }
         });
 
