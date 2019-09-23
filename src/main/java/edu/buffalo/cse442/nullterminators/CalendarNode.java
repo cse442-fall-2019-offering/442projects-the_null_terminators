@@ -1,5 +1,7 @@
 package edu.buffalo.cse442.nullterminators;
 
+import javafx.beans.NamedArg;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import java.time.LocalDate;
@@ -24,6 +26,8 @@ public class CalendarNode extends GridPane {
     }
 
     private void AddRowsAndCols(int rows, int cols) {
+        this.getChildren().clear();
+        dates.clear();
         //need to add empty text for elements to show up
         this.getChildren().clear();
         for(int i = 0; i < rows; i++) {
@@ -38,7 +42,6 @@ public class CalendarNode extends GridPane {
         LocalDate firstDayOfMonth = firstDayofRange.minusDays(firstDayofRange.getDayOfMonth() - 1);
         int dayOffset = 0;
         int init_j = firstDayOfMonth.getDayOfWeek().getValue();
-
         dates.add(new ArrayList<>());
         if (init_j != 7) {
             for (int j = 0; j < init_j; ++j) {
@@ -90,8 +93,8 @@ public class CalendarNode extends GridPane {
         }
     }
 
-    public void changeView(VIEW viewOfCalendar) {
 
+    public void changeView(VIEW viewOfCalendar) {
         switch(viewOfCalendar) {
             case MONTH:
                 AddRowsAndCols(5, 7);

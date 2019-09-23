@@ -24,5 +24,11 @@ public class Main extends Application {
         scene.getStylesheets().add(getClass().getResource("main_style.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        Notification notification_demo = new Notification();
+        notification_demo.setTitle("Project Grading");
+        notification_demo.setDatetime("9/23/2019 3:30:00 PM");
+        notification_demo.setDescription("Having our project graded by a super cool TA");
+        notification_demo.showDialog();
     }
 }
