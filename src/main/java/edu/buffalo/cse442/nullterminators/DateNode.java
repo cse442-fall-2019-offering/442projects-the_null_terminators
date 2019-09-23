@@ -2,12 +2,10 @@ package edu.buffalo.cse442.nullterminators;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import java.time.LocalDate;
 
@@ -27,11 +25,16 @@ public class DateNode extends AnchorPane {
             }
         });
 
-        Pane spacer = new Pane();
-        spacer.setMinSize(10, 1);
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        BorderPane boxy = new BorderPane();
+        boxy.setLeft(dateView);
+        boxy.setRight(add_event);
 
-        this.getChildren().addAll(add_event, spacer, dateView);
+        this.setTopAnchor(boxy, 0.0);
+        this.setRightAnchor(boxy, 0.0);
+        this.setBottomAnchor(boxy, 0.0);
+        this.setLeftAnchor(boxy, 5.0);
+
+        this.getChildren().add(boxy);
     }
 
     public LocalDate getDate() {
@@ -40,9 +43,6 @@ public class DateNode extends AnchorPane {
 
     void setDate(LocalDate newDate) {
         date = newDate;
-        if (newDate == LocalDate.now()) {
-            
-        }
         dateView.setText(Integer.toString(date.getDayOfMonth()));
     }
 }
