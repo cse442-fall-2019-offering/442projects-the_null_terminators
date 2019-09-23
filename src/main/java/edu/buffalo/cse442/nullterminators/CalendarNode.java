@@ -25,6 +25,7 @@ public class CalendarNode extends GridPane {
 
     private void AddRowsAndCols(int rows, int cols) {
         //need to add empty text for elements to show up
+        this.getChildren().clear();
         for(int i = 0; i < rows; i++) {
             this.addRow(i, new Text(""));
             for(int j = 0; j < cols; j++) {
@@ -62,6 +63,7 @@ public class CalendarNode extends GridPane {
             for(int j = 0; j < this.getColumnCount(); j++) {
                 dates.get(i).add(new DateNode());
                 dates.get(i).get(j).setDate(firstDayOfMonth.plusDays(dayOffset));
+                dates.get(i).get(j).setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1;");
                 this.add(dates.get(i).get(j), j, i);
                 dayOffset++;
             }
@@ -89,6 +91,7 @@ public class CalendarNode extends GridPane {
     }
 
     public void changeView(VIEW viewOfCalendar) {
+
         switch(viewOfCalendar) {
             case MONTH:
                 AddRowsAndCols(5, 7);
