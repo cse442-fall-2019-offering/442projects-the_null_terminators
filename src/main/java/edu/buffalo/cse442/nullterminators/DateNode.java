@@ -12,11 +12,13 @@ import java.time.LocalDate;
 public class DateNode extends AnchorPane {
     private LocalDate date;
     private Text dateView;
+    private Text today;
     private Button add_event;
 
     DateNode(Node... children) {
         super(children);
         dateView = new Text();
+        today = new Text();
         add_event = new Button("+");
         add_event.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -27,6 +29,7 @@ public class DateNode extends AnchorPane {
 
         BorderPane boxy = new BorderPane();
         boxy.setLeft(dateView);
+        boxy.setCenter(today);
         boxy.setRight(add_event);
 
         this.setTopAnchor(boxy, 0.0);
@@ -43,6 +46,9 @@ public class DateNode extends AnchorPane {
 
     void setDate(LocalDate newDate) {
         date = newDate;
+        if (newDate.compareTo(LocalDate.now()) == 0) {
+            today.setText("TODAAYY");
+        }
         dateView.setText(Integer.toString(date.getDayOfMonth()));
     }
 }
