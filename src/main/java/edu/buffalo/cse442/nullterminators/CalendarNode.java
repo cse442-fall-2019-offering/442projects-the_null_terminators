@@ -9,11 +9,20 @@ import java.util.ArrayList;
 
 public class CalendarNode extends GridPane {
     private ArrayList<ArrayList<DateNode>> dates = new ArrayList<>();
+    private LocalDate offset = LocalDate.now();
 
     public enum VIEW {
         MONTH,
         WEEK,
         DAY
+    }
+
+    public void setOffset(LocalDate newOffset) {
+        offset = newOffset;
+    }
+
+    public LocalDate getOffset() {
+        return offset;
     }
 
     private void AddRowsAndCols(int rows, int cols) {
@@ -43,7 +52,7 @@ public class CalendarNode extends GridPane {
     }
 
     private void setDateRange(VIEW view) {
-        LocalDate currentDay = LocalDate.now();
+        LocalDate currentDay = offset;
         switch(view) {
             case MONTH:
                 LocalDate firstDayOfMonth = currentDay.minusDays(currentDay.getDayOfMonth() - 1);
@@ -57,7 +66,7 @@ public class CalendarNode extends GridPane {
                 this.add(dates.get(0).get(0), 0, 0);
                 break;
             case WEEK:
-                LocalDate firstDayOfWeek = currentDay.minusDays(currentDay.getDayOfWeek().getValue() - 1);
+                LocalDate firstDayOfWeek = currentDay.minusDays(currentDay.getDayOfWeek().getValue());
                 calculateDateRange(firstDayOfWeek);
                 break;
         }

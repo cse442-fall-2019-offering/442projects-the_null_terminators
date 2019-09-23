@@ -31,19 +31,25 @@ public class MainWindow {
         month_before.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Switching to month before..");
+                calendarGrid.setOffset(calendarGrid.getOffset().minusMonths(1));
+                calendarGrid.changeView(CalendarNode.VIEW.MONTH);
+                dateDisplayController.updateDateText(calendarGrid.getOffset());
             }
         });
         today.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Switching to back to current date..");
+                calendarGrid.setOffset(LocalDate.now());
+                calendarGrid.changeView(CalendarNode.VIEW.MONTH);
+                dateDisplayController.updateDateText(calendarGrid.getOffset());
             }
         });
         month_after.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Switching to month after..");
+                calendarGrid.setOffset(calendarGrid.getOffset().plusMonths(1));
+                calendarGrid.changeView(CalendarNode.VIEW.MONTH);
+                dateDisplayController.updateDateText(calendarGrid.getOffset());
             }
         });
 
