@@ -118,5 +118,6 @@ public class CalendarNode extends GridPane {
         super();
         changeView(VIEW.MONTH);
         this.setStyle("-fx-background-fill: black, white; -fx-background-insets: 0, 1 ;");
+
     }
 }
