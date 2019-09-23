@@ -15,7 +15,17 @@ public class DateDisplay {
     }
 
     public void updateDateText(LocalDate date) {
-        dateDisplayText.setText(date.format(DateTimeFormatter.ofPattern("dd LLLL yyyy")));
+        String month = date.format(DateTimeFormatter.ofPattern("LLLL yyyy"));
+
+        // will do later if my heart is feelin it
+        /*
+        switch(month) {
+            case "January":
+
+        }
+
+        */
+        dateDisplayText.setText(month);
     }
 
     @FXML
