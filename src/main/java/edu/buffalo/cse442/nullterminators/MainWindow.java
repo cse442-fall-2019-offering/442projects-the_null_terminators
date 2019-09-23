@@ -32,6 +32,8 @@ public class MainWindow {
     @FXML
     void initialize() {
         dateDisplayController.updateDateText(LocalDate.now());
+        weekViewButton.setVisible(false);
+        dayViewButton.setVisible(false);
         month_before.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
