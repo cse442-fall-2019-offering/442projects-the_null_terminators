@@ -1,123 +1,83 @@
 package edu.buffalo.cse442.nullterminators;
 
+import javafx.event.Event;
 import javafx.scene.control.Button;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class MainWindow {
-    @FXML private DotwNode dotw;
+
     @FXML private CalendarNode calendarGrid;
     @FXML private DateDisplay dateDisplayController;
-    @FXML private Button before;
+    @FXML private Button month_before;
     @FXML private Button today;
-    @FXML private Button after;
-    /*
+    @FXML private Button month_after;
     @FXML private Button weekViewButton;
     @FXML private Button monthViewButton;
     @FXML private Button dayViewButton;
-     */
-
-    @FXML private MenuItem RESET;
-
-
-    @FXML private MenuItem weekViewButton;
-    @FXML private MenuItem monthViewButton;
-    @FXML private MenuItem dayViewButton;
-    @FXML private MenuItem ubImport;
-    @FXML private MenuItem importCal;
 
     private LocalDate date = LocalDate.now();
-    private CalendarNode.VIEW view = CalendarNode.VIEW.MONTH;
-
 
     public MainWindow() {
-
     }
 
     @FXML
     void initialize() {
-        dotw.show();
         dateDisplayController.updateDateText(LocalDate.now());
-
-        before.setOnAction(e -> {
-            switchHelper(-1);
-            dateDisplayController.updateDateText(date);
-            calendarGrid.change(view, date);
+        weekViewButton.setVisible(false);
+        dayViewButton.setVisible(false);
+        month_before.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                long daysTillLastMonth = date.minusMonths(1).until(date, ChronoUnit.DAYS);
+                date = date.minusDays(daysTillLastMonth);
+                dateDisplayController.updateDateText(date);
+                calendarGrid.changeMonths(date);
+            }
+        });
+        today.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                date = LocalDate.now();
+                dateDisplayController.updateDateText(date);
+                calendarGrid.changeMonths(date);
+            }
+        });
+        month_after.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                long daysTillNextMonth = date.until(date.plusMonths(1), ChronoUnit.DAYS);
+                date = date.plusDays(daysTillNextMonth);
+                dateDisplayController.updateDateText(date);
+                calendarGrid.changeMonths(date);
+            }
         });
 
-        today.setOnAction(e -> {
-            date = LocalDate.now();
-            dateDisplayController.updateDateText(date);
-            calendarGrid.change(view, date);
+        weekViewButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                calendarGrid.changeView(CalendarNode.VIEW.WEEK);
+            }
         });
-
-        after.setOnAction(e -> {
-            switchHelper(1);
-            dateDisplayController.updateDateText(date);
-            calendarGrid.change(view, date);
+        monthViewButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                calendarGrid.changeView(CalendarNode.VIEW.MONTH);
+            }
         });
-
-        weekViewButton.setOnAction(e -> {
-            dotw.show();
-            view = CalendarNode.VIEW.WEEK;
-            calendarGrid.change(view, date);
+        dayViewButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                calendarGrid.changeView(CalendarNode.VIEW.DAY);
+            }
         });
-        monthViewButton.setOnAction(e -> {
-            dotw.show();
-            view = CalendarNode.VIEW.MONTH;
-            calendarGrid.change(view, date);
-        });
-        dayViewButton.setOnAction(e -> {
-            dotw.clear();
-            view = CalendarNode.VIEW.DAY;
-            calendarGrid.change(view, date);
-        });
-
-        ubImport.setOnAction(e -> {
-            new importUBCal().window();
-        });
-
-        RESET.setOnAction(e -> {
-            System.out.println(LocalDate.now().getDayOfWeek().getValue() + " - " + LocalDate.now().getDayOfWeek());
-        });
-        importCal.setOnAction(e -> {
-            new importCalendars().window();
-        });
-
-    }
-
-    /** if dir = -1:
-     *      go backward
-     *  if dir =  1:
-     *      go forward
-     */
-    private void switchHelper(int dir) {
-        switch(view) {
-            case MONTH: {
-                if (dir == 1) {
-//                    long daysTillNextMonth = date.until(date.plusMonths(1), ChronoUnit.DAYS);
-//                    date = date.plusDays(daysTillNextMonth);
-                    date = date.plusMonths(1);
-                } else {
-//                    long daysTillLastMonth = date.minusMonths(1).until(date, ChronoUnit.DAYS);
-//                    date = date.minusDays(daysTillLastMonth);
-                    date = date.minusMonths(1);
-                }}
-            case WEEK: {
-                if (dir == 1) {
-                    date = date.plusWeeks(1);
-                } else {
-                    date = date.minusWeeks(1);
-                }}
-            case DAY: {
-                if (dir == 1) {
-                    date = date.plusDays(1);
-                } else {
-                    date = date.minusDays(1);
-                }}
-        }
     }
 }
-
