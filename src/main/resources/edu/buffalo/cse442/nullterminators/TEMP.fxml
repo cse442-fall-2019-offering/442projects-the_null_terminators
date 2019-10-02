@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -23,6 +24,7 @@
             <Font size="18.0" />
           </font>
         </Label>
+            <DatePicker layoutX="122.0" layoutY="259.0" />
       </children>
     </AnchorPane>
   </children>

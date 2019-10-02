@@ -1,9 +1,8 @@
 package edu.buffalo.cse442.nullterminators;
 
-import javafx.beans.NamedArg;
-import javafx.beans.property.BooleanProperty;
-import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
+import javafx.geometry.Insets;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -17,56 +16,46 @@ public class CalendarNode extends GridPane {
         DAY
     }
 
-    public void setOffset(LocalDate newOffset) {
-        offset = newOffset;
-    }
-
-    public LocalDate getOffset() {
-        return offset;
-    }
-
     private void AddRowsAndCols(int rows, int cols) {
-        this.getChildren().clear();
-        dates.clear();
-        //need to add empty text for elements to show up
-        this.getChildren().clear();
-        for(int i = 0; i < rows; i++) {
-            this.addRow(i, new Text(""));
-            for(int j = 0; j < cols; j++) {
-                this.addColumn(j, new Text(""));
-            }
+        for (int i = 0; i < rows + 1; ++i) {
+            RowConstraints r_add = new RowConstraints();
+            r_add.setPercentHeight(Double.valueOf(1.0/rows) * 100);
+            this.getRowConstraints().add(r_add);
+        }
+        for (int j = 0; j < cols; ++j) {
+            ColumnConstraints c_add = new ColumnConstraints();
+            c_add.setPercentWidth(Double.valueOf(1.0/cols) * 100);
+            this.getColumnConstraints().add(c_add);
         }
     }
 
-    private void calculateDateRange(LocalDate firstDayofRange) {
-        LocalDate firstDayOfMonth = firstDayofRange.minusDays(firstDayofRange.getDayOfMonth() - 1);
-        int dayOffset = 0;
-        int init_j = firstDayOfMonth.getDayOfWeek().getValue();
-        dates.add(new ArrayList<>());
-        if (init_j != 7) {
-            for (int j = 0; j < init_j; ++j) {
-                dates.get(0).add(new DateNode());
-                dates.get(0).get(j).setDate(firstDayOfMonth.minusDays(init_j - j));
-                dates.get(0).get(j).setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1;");
-                this.add(dates.get(0).get(j), j, 0);
-            }
+
+    private void calculateDateRange(VIEW view, LocalDate firstDayofRange) {
+        System.out.println(firstDayofRange);
+        LocalDate firstDay = firstDayofRange.minusDays(firstDayofRange.getDayOfMonth() - 1);
+        if (view == VIEW.WEEK) {
+            firstDay = firstDayofRange;
         }
-        else {
+        int dayOffset = 0;
+        int init_j = firstDay.getDayOfWeek().getValue();
+        dates.add(new ArrayList<>());
+        if (init_j == 7) {
             init_j = 0;
         }
-        for (int j = init_j; j < this.getColumnCount(); j++) {
-            dates.get(0).add(new DateNode());
-            dates.get(0).get(j).setDate(firstDayOfMonth.plusDays(dayOffset));
-            dates.get(0).get(j).setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1;");
-            this.add(dates.get(0).get(j), j, 0);
-            dayOffset++;
-        }
-        for (int i = 1; i < this.getRowCount() - 1; i++) {
+        for (int i = 0; i < this.getRowCount() - 1; i++) {
             dates.add(new ArrayList<>());
             for(int j = 0; j < this.getColumnCount(); j++) {
                 dates.get(i).add(new DateNode());
-                dates.get(i).get(j).setDate(firstDayOfMonth.plusDays(dayOffset));
+                dates.get(i).get(j).setDate(firstDay.plusDays(dayOffset));
                 dates.get(i).get(j).setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1;");
+                if (i == 0) {
+                    if (j < init_j) {
+                        dates.get(i).get(j).setDate(firstDay.minusDays(init_j - j));                                // overwrite previous values for days, special case (previous month days)
+                        BackgroundFill color = new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY);
+                        dates.get(i).get(j).setBackground(new Background(color));
+                        dayOffset--;
+                    }
+                }
                 this.add(dates.get(i).get(j), j, i);
                 dayOffset++;
             }
@@ -77,7 +66,7 @@ public class CalendarNode extends GridPane {
         switch(view) {
             case MONTH:
                 LocalDate firstDayOfMonth = date.minusDays(date.getDayOfMonth() - 1);
-                calculateDateRange(firstDayOfMonth);
+                calculateDateRange(view, firstDayOfMonth);
                 break;
             case DAY:
                 dates.add(new ArrayList<>());
@@ -87,14 +76,18 @@ public class CalendarNode extends GridPane {
                 this.add(dates.get(0).get(0), 0, 0);
                 break;
             case WEEK:
-                LocalDate firstDayOfWeek = date.minusDays(date.getDayOfWeek().getValue() - 1);
-                calculateDateRange(firstDayOfWeek);
+                LocalDate firstDayOfWeek = date.minusDays(date.getDayOfWeek().getValue());
+                calculateDateRange(view, firstDayOfWeek);
                 break;
         }
     }
 
 
-    public void changeView(VIEW viewOfCalendar) {
+    public void change(VIEW viewOfCalendar, LocalDate toDate) {
+        this.getChildren().clear();
+        dates.clear();
+        this.getRowConstraints().clear();
+        this.getColumnConstraints().clear();
         switch(viewOfCalendar) {
             case MONTH:
                 AddRowsAndCols(5, 7);
@@ -103,21 +96,14 @@ public class CalendarNode extends GridPane {
                 AddRowsAndCols(1, 7);
                 break;
             case DAY:
-                AddRowsAndCols(1, 1);
+                AddRowsAndCols(1,1);
                 break;
         }
-        setDateRange(viewOfCalendar, LocalDate.now());
-    }
-
-    public void changeMonths(LocalDate toDate) {
-        AddRowsAndCols(5, 7);
-        setDateRange(VIEW.MONTH, toDate);
+        setDateRange(viewOfCalendar, toDate);
     }
 
     public CalendarNode() {
         super();
-        changeView(VIEW.MONTH);
-        this.setStyle("-fx-background-fill: black, white; -fx-background-insets: 0, 1 ;");
-
+        change(VIEW.MONTH, LocalDate.now());
     }
 }
