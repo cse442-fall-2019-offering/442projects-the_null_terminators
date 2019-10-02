@@ -1,5 +1,6 @@
 package edu.buffalo.cse442.nullterminators;
 
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -121,6 +122,10 @@ public class DateNode extends AnchorPane {
 
         adding.setOnAction(e -> {
             Alert popup = new Alert(Alert.AlertType.CONFIRMATION);
+            popup.setResizable(true);
+            popup.onShownProperty().addListener(f -> {
+                Platform.runLater(() -> popup.setResizable(false));
+            });
             popup.setTitle("EVENT: " + event);
             popup.setHeaderText("");
             popup.setContentText("Test dialog for when clicking on an event on the calendar!");

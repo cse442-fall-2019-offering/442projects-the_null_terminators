@@ -76,14 +76,14 @@ public class MainWindow {
         });
 
         ubImport.setOnAction(e -> {
-            new importUBCal().window();
+            //new importUBCal().window();
         });
 
         RESET.setOnAction(e -> {
             System.out.println(LocalDate.now().getDayOfWeek().getValue() + " - " + LocalDate.now().getDayOfWeek());
         });
         importCal.setOnAction(e -> {
-            new importCalendars().window();
+            //new importCalendars().window();
         });
 
     }
