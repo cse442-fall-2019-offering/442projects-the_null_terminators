@@ -87,6 +87,7 @@ public class DateNode extends AnchorPane {
             LocalDateTime temp = LocalDateTime.now().minusHours(3);
             event(temp, "Wake up");
             event(temp.plusMinutes(13), "Poop");
+            event(temp.plusMinutes(45), "Eat some breakfast");
             event(temp.plusMinutes(59), "Go back to sleep");
             // TODO: add previously stored events
         }
