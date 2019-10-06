@@ -111,7 +111,6 @@ public class DateNode extends AnchorPane {
     }
 
     private void event(LocalDateTime time, String event) {
-
         Button adding = new Button(formatTime(time) + " - " + event);
         HBox.setHgrow(adding, Priority.ALWAYS);
         adding.setPadding(new Insets(0, 0, 0, 0));
