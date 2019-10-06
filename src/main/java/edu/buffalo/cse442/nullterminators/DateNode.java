@@ -13,9 +13,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
-
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -97,7 +94,7 @@ public class DateNode extends AnchorPane {
         dateView.setText(" " + date.getDayOfMonth());
     }
 
-    String formatTime(LocalDateTime time) {
+    private String formatTime(LocalDateTime time) {
         int unf_hr = time.getHour();
         int unf_min = time.getMinute();
         String hours = Integer.toString(unf_hr);
