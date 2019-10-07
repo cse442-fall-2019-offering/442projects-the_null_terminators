@@ -34,7 +34,7 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
-    
+
     public static Boolean addEvent(String name, String datetime, String description) {
         Connection conn = openConnection();
 
@@ -50,5 +50,29 @@ public class Database {
             return false;
         }
         return true;
+    }
+
+    public static ArrayList<String[]> getEvents(String startDate, String endDate) {
+        Connection conn = openConnection();
+        ArrayList<String[]> retVal = new ArrayList<String[]>();
+
+        String sql = "SELECT * FROM events WHERE datetime >= ? AND datetime <= ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, startDate);
+            statement.setString(2, endDate);
+            ResultSet rs = statement.executeQuery(sql);
+            while (rs.next()) {
+                String[] row = new String[3];
+                row[0] = rs.getString("name");
+                row[1] = rs.getString("datetime");
+                row[2] = rs.getString("description");
+                retVal.add(row);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+        return retVal;
     }
 }
