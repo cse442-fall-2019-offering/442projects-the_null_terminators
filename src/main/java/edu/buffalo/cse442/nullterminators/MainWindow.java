@@ -96,7 +96,6 @@ public class MainWindow {
     private void switchHelper(int dir) {
         switch(view) {
             case MONTH: {
-                System.out.println(date);
                 if (dir == 1) {
                    date = date.plusMonths(1);
                 } else {

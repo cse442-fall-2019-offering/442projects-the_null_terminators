@@ -3,6 +3,7 @@ package edu.buffalo.cse442.nullterminators;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -15,6 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class DateNode extends AnchorPane {
 
@@ -35,7 +37,7 @@ public class DateNode extends AnchorPane {
         add_event.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                new EventWindow().createEEWindow();
+                new EventWindow();
             }
         });
 
@@ -81,10 +83,10 @@ public class DateNode extends AnchorPane {
             // TODO: actually not todo, color just more noticebale. THIS IS TEMPORARY
             // this format could be transformed into {time : (event[1], event[2], ...)}
             LocalDateTime temp = LocalDateTime.now().minusHours(3);
-            event(temp, "Wake up");
-            event(temp.plusMinutes(13), "Poop");
-            event(temp.plusMinutes(45), "Eat some breakfast");
-            event(temp.plusMinutes(59), "Go back to sleep");
+            event(temp, "Wake up", "Gotta wake up eventually..");
+            event(temp.plusMinutes(13), "Poop", "You ate a lot of snacks at night, clear out!!");
+            event(temp.plusMinutes(45), "Eat some breakfast", "You just cleared out last night's snacks!! LOAD UP!!!");
+            event(temp.plusMinutes(59), "Go back to sleep", "LOADING UP IS A LOT OF WORK!!! NAP TIME!!!");
             // TODO: add previously stored events
         }
         else {
@@ -100,8 +102,8 @@ public class DateNode extends AnchorPane {
         String hours = Integer.toString(unf_hr);
         String minutes = Integer.toString(unf_min);
 
-        if (unf_hr < 10) {
-            hours = "0" + unf_hr;
+        if (unf_hr > 12) {
+            hours = "" + (unf_hr - 12);
         }
         if (unf_min < 10) {
             minutes = "0" + unf_min;
@@ -109,7 +111,9 @@ public class DateNode extends AnchorPane {
         return hours + ":" + minutes;
     }
 
-    private void event(LocalDateTime time, String event) {
+
+    // using LocalDateTime.parse(String)
+    private void event(LocalDateTime time, String event, String details) {
         Button adding = new Button(formatTime(time) + " - " + event);
         HBox.setHgrow(adding, Priority.ALWAYS);
         adding.setPadding(new Insets(0, 0, 0, 0));
@@ -117,15 +121,7 @@ public class DateNode extends AnchorPane {
         adding.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
 
         adding.setOnAction(e -> {
-            Alert popup = new Alert(Alert.AlertType.CONFIRMATION);
-            popup.setResizable(true);
-            popup.onShownProperty().addListener(f -> {
-                Platform.runLater(() -> popup.setResizable(false));
-            });
-            popup.setTitle("EVENT: " + event);
-            popup.setHeaderText("");
-            popup.setContentText("Test dialog for when clicking on an event on the calendar!");
-            popup.showAndWait();
+            new EventWindow(time, event, details);
         });
 
         adding.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean show) -> {
