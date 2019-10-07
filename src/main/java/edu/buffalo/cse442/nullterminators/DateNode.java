@@ -70,7 +70,6 @@ public class DateNode extends AnchorPane {
 
     void setDate(LocalDate setDate) {
         date = setDate;
-        LocalDate lastDayOfLastMonth = setDate.minusDays(setDate.getDayOfMonth());
         if (setDate.isBefore(LocalDate.now())) {
             BackgroundFill color = new BackgroundFill(Color.GAINSBORO, CornerRadii.EMPTY, Insets.EMPTY);
             this.setBackground(new Background(color));

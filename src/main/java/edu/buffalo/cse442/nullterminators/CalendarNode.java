@@ -6,10 +6,7 @@ import javafx.scene.paint.Color;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.WeekFields;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class CalendarNode extends GridPane {
     private ArrayList<ArrayList<DateNode>> dates = new ArrayList<>();
@@ -35,7 +32,6 @@ public class CalendarNode extends GridPane {
     }
 
     private void calculateDateRange(VIEW view, LocalDate firstDay) {
-        System.out.println(firstDay);
         int dayOffset = 0;
         int init_j = firstDay.getDayOfWeek().getValue();
         dates.add(new ArrayList<>());
@@ -63,9 +59,14 @@ public class CalendarNode extends GridPane {
     }
 
     private void setDateRange(VIEW view, LocalDate date) {
+        System.out.println(date);
         switch(view) {
             case MONTH:
-                LocalDate firstDayOfMonth = date.minusDays(date.getDayOfMonth() - 1);
+                String month = Integer.toString(date.getMonthValue());
+                if (date.getMonthValue() < 10) {
+                    month = "0" + date.getMonthValue();
+                }
+                LocalDate firstDayOfMonth = LocalDate.parse(date.getYear() + "-" + month + "-" + "01");
                 calculateDateRange(view, firstDayOfMonth);
                 break;
             case DAY:
@@ -90,7 +91,7 @@ public class CalendarNode extends GridPane {
                 break;
         }
     }
-    
+
     public void change(VIEW viewOfCalendar, LocalDate toDate) {
         this.getChildren().clear();
         dates.clear();

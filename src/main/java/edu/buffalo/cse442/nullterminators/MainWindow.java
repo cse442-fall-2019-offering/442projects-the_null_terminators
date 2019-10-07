@@ -96,27 +96,27 @@ public class MainWindow {
     private void switchHelper(int dir) {
         switch(view) {
             case MONTH: {
+                System.out.println(date);
                 if (dir == 1) {
-//                    long daysTillNextMonth = date.until(date.plusMonths(1), ChronoUnit.DAYS);
-//                    date = date.plusDays(daysTillNextMonth);
-                    date = date.plusMonths(1);
+                   date = date.plusMonths(1);
                 } else {
-//                    long daysTillLastMonth = date.minusMonths(1).until(date, ChronoUnit.DAYS);
-//                    date = date.minusDays(daysTillLastMonth);
                     date = date.minusMonths(1);
                 }}
+                break;
             case WEEK: {
                 if (dir == 1) {
                     date = date.plusWeeks(1);
                 } else {
                     date = date.minusWeeks(1);
                 }}
+                break;
             case DAY: {
                 if (dir == 1) {
                     date = date.plusDays(1);
                 } else {
                     date = date.minusDays(1);
                 }}
+                break;
         }
     }
 }
