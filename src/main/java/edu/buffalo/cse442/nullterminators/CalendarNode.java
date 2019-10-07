@@ -3,8 +3,13 @@ package edu.buffalo.cse442.nullterminators;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class CalendarNode extends GridPane {
     private ArrayList<ArrayList<DateNode>> dates = new ArrayList<>();
@@ -29,13 +34,8 @@ public class CalendarNode extends GridPane {
         }
     }
 
-
-    private void calculateDateRange(VIEW view, LocalDate firstDayofRange) {
-        System.out.println(firstDayofRange);
-        LocalDate firstDay = firstDayofRange.minusDays(firstDayofRange.getDayOfMonth() - 1);
-        if (view == VIEW.WEEK) {
-            firstDay = firstDayofRange;
-        }
+    private void calculateDateRange(VIEW view, LocalDate firstDay) {
+        System.out.println(firstDay);
         int dayOffset = 0;
         int init_j = firstDay.getDayOfWeek().getValue();
         dates.add(new ArrayList<>());
@@ -76,13 +76,21 @@ public class CalendarNode extends GridPane {
                 this.add(dates.get(0).get(0), 0, 0);
                 break;
             case WEEK:
-                LocalDate firstDayOfWeek = date.minusDays(date.getDayOfWeek().getValue());
-                calculateDateRange(view, firstDayOfWeek);
+                LocalDate firstDay = date;
+                if (firstDay.getDayOfWeek() == DayOfWeek.SATURDAY) {
+                    firstDay = firstDay.plusDays(1);
+                }
+                else if (firstDay.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                    while (firstDay.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                        firstDay = firstDay.minusDays(1);
+                    }
+                }
+                else {}     // do nothing
+                calculateDateRange(VIEW.WEEK, firstDay);
                 break;
         }
     }
-
-
+    
     public void change(VIEW viewOfCalendar, LocalDate toDate) {
         this.getChildren().clear();
         dates.clear();
