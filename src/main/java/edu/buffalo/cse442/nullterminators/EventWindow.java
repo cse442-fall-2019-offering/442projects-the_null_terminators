@@ -1,5 +1,6 @@
 package edu.buffalo.cse442.nullterminators;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -59,10 +60,14 @@ public class EventWindow {
 
         ComboBox<String> hours = new ComboBox();                    // pick what hour event is
         hours.setEditable(true);
-        hours.setMaxWidth(50);
+        hours.setMinWidth(55);
+        hours.setMaxWidth(55);
         hours.getItems().addAll("1","2","3","4","5","6","7","8","9","10","11","12");
-        if (when.getMinute() > 12) {
+        if (when.getHour() > 12) {
             hours.setValue(Integer.toString(when.getHour() - 12));
+        }
+        else if (when.getHour() == 0) {
+            hours.setValue("12");
         }
         else {
             hours.setValue(Integer.toString(when.getHour()));
@@ -73,6 +78,7 @@ public class EventWindow {
 
         ComboBox<String> minutes = new ComboBox();                  // picking minute of event
         minutes.setEditable(true);
+        minutes.setMinWidth(55);
         minutes.setMaxWidth(55);
         minutes.getItems().addAll("00", "15", "30", "45");
         if (when.getMinute() < 10) {
@@ -146,8 +152,7 @@ public class EventWindow {
         addEvent.setOnMouseClicked(new EventHandler<>() {
             @Override
             public void handle(MouseEvent event) {
-                setValues(eventTitle, eventDes, date, Integer.valueOf(hours.getValue().toString()), Integer.valueOf(minutes.getValue().toString()));
-                stage.close();
+                setValues(eventTitle, eventDes, date, hours.getValue().toString(), minutes.getValue().toString(), stage);
             }
         });
 
@@ -155,8 +160,7 @@ public class EventWindow {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.ENTER) {
-                    setValues(eventTitle, eventDes, date, Integer.valueOf(hours.getValue().toString()), Integer.valueOf(minutes.getValue().toString()));
-                    stage.close();
+                    setValues(eventTitle, eventDes, date, hours.getValue().toString(), minutes.getValue().toString(), stage);
                 }
             }
         });
@@ -175,10 +179,26 @@ public class EventWindow {
         stage.show();
     }
 
-    private void setValues(TextArea tits, TextArea dets, DatePicker day, int hours, int minutes) {
+    private void setValues(TextArea tits, TextArea dets, DatePicker day, String hours, String minutes, Stage stage) {
         title = tits.getText();
         details = dets.getText();
-        when = LocalDateTime.of(day.getValue().getYear(), day.getValue().getMonthValue(), day.getValue().getDayOfMonth(), hours, minutes);
+        int h = 4, m = 20;
+        try  {
+            h = Integer.parseInt(hours);
+            m = Integer.parseInt(minutes);
+            stage.close();
+        } catch (NumberFormatException nfe) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Invalid Format!!");
+            alert.setHeaderText(null);
+            alert.setContentText("An integer must be entered for the time!");
+            alert.setResizable(true);
+            alert.onShownProperty().addListener(e -> {
+                Platform.runLater(() -> alert.setResizable(false));
+            });
+            alert.showAndWait();
+        }
+        when = LocalDateTime.of(day.getValue().getYear(), day.getValue().getMonthValue(), day.getValue().getDayOfMonth(), h, m);
         consoleTest();
     }
 
