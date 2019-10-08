@@ -62,6 +62,7 @@ public class EventWindow {
         hours.setEditable(true);
         hours.setMinWidth(55);
         hours.setMaxWidth(55);
+        hours.setStyle("-fx-font: 11 arial");
         hours.getItems().addAll("1","2","3","4","5","6","7","8","9","10","11","12");
         if (when.getHour() > 12) {
             hours.setValue(Integer.toString(when.getHour() - 12));
@@ -80,6 +81,7 @@ public class EventWindow {
         minutes.setEditable(true);
         minutes.setMinWidth(55);
         minutes.setMaxWidth(55);
+        minutes.setStyle("-fx-font: 11 arial");
         minutes.getItems().addAll("00", "15", "30", "45");
         if (when.getMinute() < 10) {
             minutes.setValue("0" + when.getMinute());
