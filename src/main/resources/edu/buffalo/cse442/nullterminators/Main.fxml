@@ -26,10 +26,11 @@
                    <MenuItem fx:id = "dayViewButton" mnemonicParsing="false" text="Day" />
                    <MenuItem fx:id = "weekViewButton" mnemonicParsing="false" text="Week" />
                    <MenuItem fx:id = "monthViewButton" mnemonicParsing="false" text="Month" />
-                   <MenuItem mnemonicParsing="false" text= " --------------------- " />
+<!--                   <MenuItem fx:id = "themes" mnemonicParsing="false" text="Theme Editor.."/>
                    <MenuItem fx:id = "ubImport" mnemonicParsing="false" text="Import UB Calendar.." />
                    <MenuItem fx:id = "importCal" mnemonicParsing="false" text="Import calendars.." />
                    <MenuItem fx:id = "RESET" mnemonicParsing="false" text="RESET - for debugging" />
+-->
                </items>
            </MenuButton>
         </items>

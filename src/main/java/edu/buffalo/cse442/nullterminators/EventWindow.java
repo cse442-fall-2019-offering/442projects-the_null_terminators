@@ -58,6 +58,8 @@ public class EventWindow {
         date.setValue(LocalDateTime.now().toLocalDate());
 
         ComboBox<String> hours = new ComboBox();                    // pick what hour event is
+        hours.setEditable(true);
+        hours.setMaxWidth(50);
         hours.getItems().addAll("1","2","3","4","5","6","7","8","9","10","11","12");
         if (when.getMinute() > 12) {
             hours.setValue(Integer.toString(when.getHour() - 12));
@@ -70,6 +72,8 @@ public class EventWindow {
         Label colon = new Label(" : ");
 
         ComboBox<String> minutes = new ComboBox();                  // picking minute of event
+        minutes.setEditable(true);
+        minutes.setMaxWidth(55);
         minutes.getItems().addAll("00", "15", "30", "45");
         if (when.getMinute() < 10) {
             minutes.setValue("0" + when.getMinute());
@@ -90,26 +94,26 @@ public class EventWindow {
         am_button.setMinSize(25,15);
         am_button.setMaxSize(25,15);
         am_button.setPadding(new Insets(0,0,0,0));
-        am_button.setStyle("-fx-border-color: black; -fx-border-width: 1px 0px 1px 1px");
+        am_button.setStyle("-fx-border-color: black; -fx-border-width: .5px 0px .5px .5px");
 
 
         Button pm_button = new Button("PM");
         pm_button.setMinSize(25,15);
         pm_button.setMaxSize(25,15);
         pm_button.setPadding(new Insets(0,0,0,0));
-        pm_button.setStyle("-fx-border-color: black; -fx-border-width: 1px 1px 1px 0px");
+        pm_button.setStyle("-fx-border-color: black; -fx-border-width: .5px .5px .5px 0px");
 
         Background vis = new Background(new BackgroundFill(Color.DEEPSKYBLUE, CornerRadii.EMPTY, Insets.EMPTY));
         Background inv = new Background(new BackgroundFill(Color.LIGHTGREY, CornerRadii.EMPTY, Insets.EMPTY));
         if (is_am.get()) {
             am_button.setBackground(vis);
-            am_button.setFont(Font.font("Arial", FontWeight.BOLD,11));
+            am_button.setFont(Font.font("Arial", FontWeight.BOLD,10.5));
             pm_button.setBackground(inv);
             pm_button.setFont(Font.font("Arial", FontWeight.LIGHT,10));
         }
         else {
             pm_button.setBackground(vis);
-            pm_button.setFont(Font.font("Arial", FontWeight.BOLD,11));
+            pm_button.setFont(Font.font("Arial", FontWeight.BOLD,10.5));
             am_button.setBackground(inv);
             am_button.setFont(Font.font("Arial", FontWeight.LIGHT,10));
         }
@@ -118,7 +122,7 @@ public class EventWindow {
         am_button.setOnAction(e -> {
             is_am.set(true);
             am_button.setBackground(vis);
-            am_button.setFont(Font.font("Arial", FontWeight.BOLD,11));
+            am_button.setFont(Font.font("Arial", FontWeight.BOLD,10.5));
             pm_button.setBackground(inv);
             pm_button.setFont(Font.font("Arial", FontWeight.LIGHT,10));
 
@@ -126,7 +130,7 @@ public class EventWindow {
         pm_button.setOnAction(e-> {
             is_am.set(false);
             pm_button.setBackground(vis);
-            pm_button.setFont(Font.font("Arial", FontWeight.BOLD,11));
+            pm_button.setFont(Font.font("Arial", FontWeight.BOLD,10.5));
             am_button.setBackground(inv);
             am_button.setFont(Font.font("Arial", FontWeight.LIGHT,10));
         });

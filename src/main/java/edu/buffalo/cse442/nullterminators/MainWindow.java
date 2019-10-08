@@ -1,5 +1,7 @@
 package edu.buffalo.cse442.nullterminators;
 
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
@@ -27,6 +29,7 @@ public class MainWindow {
     @FXML private MenuItem dayViewButton;
     @FXML private MenuItem ubImport;
     @FXML private MenuItem importCal;
+    @FXML private MenuItem themes;
 
     private LocalDate date = LocalDate.now();
     private CalendarNode.VIEW view = CalendarNode.VIEW.MONTH;
@@ -74,9 +77,17 @@ public class MainWindow {
             view = CalendarNode.VIEW.DAY;
             calendarGrid.change(view, date);
         });
-
+/*
         ubImport.setOnAction(e -> {
             //new importUBCal().window();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Featuring coming soon!!");
+            alert.setHeaderText(null);
+            alert.setContentText("Feature coming soon!!");
+            alert.onShownProperty().addListener(x -> {
+                Platform.runLater(() -> alert.setResizable(false));
+            });
+            alert.showAndWait();
         });
 
         RESET.setOnAction(e -> {
@@ -84,8 +95,21 @@ public class MainWindow {
         });
         importCal.setOnAction(e -> {
             //new importCalendars().window();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Featuring coming soon!!");
+            alert.setHeaderText(null);
+            alert.setContentText("Feature coming soon!!");
+            alert.onShownProperty().addListener(x -> {
+                Platform.runLater(() -> alert.setResizable(false));
+            });
+            alert.showAndWait();
         });
 
+        themes.setOnAction(e -> {
+            new Theme().openThemeEditor();
+        });
+
+ */
     }
 
     /** if dir = -1:
