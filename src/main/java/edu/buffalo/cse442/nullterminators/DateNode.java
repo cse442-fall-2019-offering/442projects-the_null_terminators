@@ -117,15 +117,8 @@ public class DateNode extends AnchorPane {
         adding.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
 
         adding.setOnAction(e -> {
-            Alert popup = new Alert(Alert.AlertType.CONFIRMATION);
-            popup.setResizable(true);
-            popup.onShownProperty().addListener(f -> {
-                Platform.runLater(() -> popup.setResizable(false));
-            });
-            popup.setTitle("EVENT: " + event);
-            popup.setHeaderText("");
-            popup.setContentText("Test dialog for when clicking on an event on the calendar!");
-            popup.showAndWait();
+            //maybe load event data through constructor?
+            new EventWindow().createEEWindow();
         });
 
         adding.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean show) -> {
