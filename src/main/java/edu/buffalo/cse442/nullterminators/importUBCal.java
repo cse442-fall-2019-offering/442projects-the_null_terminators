@@ -14,6 +14,11 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.net.URL;
 
+/**
+ * class used for importing the UB calendar
+ *
+ * NOT YET IMPLEMENTED
+ */
 public class importUBCal {
 
     private String parseable;
@@ -22,6 +27,9 @@ public class importUBCal {
 
     }
 
+    /**
+     * sets up UB calendar import gui
+     */
     public void window() {
         Stage stage = new Stage();
         stage.setTitle("Import schedule from MyUB...");

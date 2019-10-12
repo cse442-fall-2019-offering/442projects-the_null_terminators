@@ -11,21 +11,22 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import edu.buffalo.cse442.nullterminators.DotwNode?>
+<?import edu.buffalo.cse442.nullterminators.MostRecentEvent?>
 <VBox minWidth = "1000.0" minHeight = "700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.buffalo.cse442.nullterminators.MainWindow">
-    <ToolBar style="-fx-background-color: cornflowerblue;" minHeight = "50.0" maxHeight = "50.0">
-       <items>
-           <Pane minWidth = "10.0" />
-           <fx:include fx:id="dateDisplay" source="DateDisplay.fxml" />
-           <Pane HBox.hgrow = "ALWAYS"/>
-           <Button fx:id = "before" mnemonicParsing="false" text="&lt;" />
-           <Button fx:id = "today" mnemonicParsing="false" text="TODAY" />
-           <Button fx:id = "after" mnemonicParsing="false" text="&gt;" />
-           <Pane minWidth = "10.0" />
+    <HBox style="-fx-background-color: cornflowerblue;" minHeight = "50.0" maxHeight = "50.0" alignment="CENTER">
+       <children>
+           <Pane minWidth = "10.0" style="-fx-background-color: cornflowerblue;"/>
+           <fx:include fx:id="_dateDisplay" maxWidth = "20" source="DateDisplay.fxml" />
+           <MostRecentEvent fx:id="_mre"></MostRecentEvent>
+           <Button fx:id = "_before" mnemonicParsing="false" text="&lt;" />
+           <Button fx:id = "_today" mnemonicParsing="false" text="TODAY"/>
+           <Button fx:id = "_after" mnemonicParsing="false" text="&gt;" />
+           <Pane minWidth = "10.0" style="-fx-background-color: cornflowerblue;"/>
            <MenuButton mnemonicParsing="false" text="Views..">
                <items>
-                   <MenuItem fx:id = "dayViewButton" mnemonicParsing="false" text="Day" />
-                   <MenuItem fx:id = "weekViewButton" mnemonicParsing="false" text="Week" />
-                   <MenuItem fx:id = "monthViewButton" mnemonicParsing="false" text="Month" />
+                   <MenuItem fx:id = "_dayViewButton" mnemonicParsing="false" text="Day" />
+                   <MenuItem fx:id = "_weekViewButton" mnemonicParsing="false" text="Week" />
+                   <MenuItem fx:id = "_monthViewButton" mnemonicParsing="false" text="Month" />
 <!--                   <MenuItem fx:id = "themes" mnemonicParsing="false" text="Theme Editor.."/>
                    <MenuItem fx:id = "ubImport" mnemonicParsing="false" text="Import UB Calendar.." />
                    <MenuItem fx:id = "importCal" mnemonicParsing="false" text="Import calendars.." />
@@ -33,14 +34,15 @@
 -->
                </items>
            </MenuButton>
-        </items>
-    </ToolBar>
+           <Pane minWidth = "10.0" style="-fx-background-color: cornflowerblue;"/>
+        </children>
+    </HBox>
     <VBox>
         <children>
-            <DotwNode fx:id = "dotw"></DotwNode>
+            <DotwNode fx:id = "_dotw"></DotwNode>
             <AnchorPane minHeight = "650.0" minWidth="700.0">
                 <children>
-                    <CalendarNode fx:id = "calendarGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                    <CalendarNode fx:id = "_calendarGrid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                 </children>
             </AnchorPane>
         </children>

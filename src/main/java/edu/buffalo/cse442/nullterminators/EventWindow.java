@@ -1,5 +1,7 @@
 package edu.buffalo.cse442.nullterminators;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -14,89 +16,112 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
-import javax.swing.*;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EventWindow {
 
-    private String title;
-    private String details;
-    private LocalDateTime when;
+    private String _title;
+    private String _details;
+    private LocalDateTime _when = LocalDateTime.now();
 
-    public EventWindow() {
-        new EventWindow(LocalDateTime.now(), "", "");
+    /**
+     * constructor for initializing event window
+     * @param time time at which the event is held, if available
+     * @param title title of the event, if available
+     * @param det details for the event
+     */
+    public EventWindow(LocalDateTime time, String title, String det) {
+        _when = time;
+        _title = title;
+        _details = det;
+
+        setup();
     }
-    public EventWindow(LocalDateTime time, String tit, String det) {
-        title = tit;
-        details = det;
-        when = time;
 
+    /**
+     * constructor for adding new events, opens up fresh event editor window
+     */
+    public EventWindow() {
+        new EventWindow(_when, _title, _details);
+        setup();
+    }
+
+    /**
+     * function that sets up and opens an event editor window
+     */
+    public void setup() {
         Stage stage = new Stage();
 
-        //set initial window layout
-        VBox frame = new VBox();
+        VBox frame = new VBox();                                    // set up layout
         frame.setPadding(new Insets(10, 20, 20,20));
         frame.setAlignment(Pos.CENTER);
-        frame.setSpacing(7.5);
+        frame.setSpacing(8);
 
-        TextArea eventTitle = new TextArea(title);                  // event title
+        Button addEvent = new Button("Add Event");
+
+        TextArea eventTitle = new TextArea(_title);                  // event title
         eventTitle.setMinSize(300, 30);
         eventTitle.setMaxSize(300, 30);
         eventTitle.setWrapText(true);
 
-        TextArea eventDes = new TextArea(details);                  // event description
+        TextArea eventDes = new TextArea(_details);                  // event description
         eventDes.setMinSize(400, 200);
         eventDes.setMaxSize(400, 200);
         eventDes.setWrapText(true);
 
 
-        HBox pickDateTime = new HBox();                             // picking date
-        DatePicker date = new DatePicker(when.toLocalDate());
-        date.setMaxWidth(100);
-        // TODO: Set date prompt to date picked on node? Somehow?
-        date.setValue(LocalDateTime.now().toLocalDate());
+        HBox pickDateTime = new HBox();                              // picking date
+        DatePicker date = new DatePicker(_when.toLocalDate());
+        date.setMaxWidth(105);
+        date.setValue(_when.toLocalDate());
 
-        ComboBox<String> hours = new ComboBox();                    // pick what hour event is
-        hours.setEditable(true);
+        ComboBox<String> hours = new ComboBox();                     // pick what hour event is
         hours.setMinWidth(55);
         hours.setMaxWidth(55);
-        hours.setStyle("-fx-font: 11 arial");
         hours.getItems().addAll("1","2","3","4","5","6","7","8","9","10","11","12");
-        if (when.getHour() > 12) {
-            hours.setValue(Integer.toString(when.getHour() - 12));
+        if (_when.getHour() > 12) {
+            hours.setValue(Integer.toString(_when.getHour() - 12));
         }
-        else if (when.getHour() == 0) {
+        else if (_when.getHour() == 0) {
             hours.setValue("12");
         }
         else {
-            hours.setValue(Integer.toString(when.getHour()));
+            hours.setValue(Integer.toString(_when.getHour()));
         }
-        hours.setMinWidth(40);
+
+        hours.setStyle("-fx-font: 11 arial");
+        hours.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px");
+        hours.setEditable(true);
+        input_validation(hours, true, addEvent);
 
         Label colon = new Label(" : ");
 
         ComboBox<String> minutes = new ComboBox();                  // picking minute of event
-        minutes.setEditable(true);
         minutes.setMinWidth(55);
         minutes.setMaxWidth(55);
-        minutes.setStyle("-fx-font: 11 arial");
         minutes.getItems().addAll("00", "15", "30", "45");
-        if (when.getMinute() < 10) {
-            minutes.setValue("0" + when.getMinute());
+        if (_when.getMinute() < 10) {
+            minutes.setValue("0" + _when.getMinute());
         }
         else {
-            minutes.setValue(Integer.toString(when.getMinute()));
+            minutes.setValue(Integer.toString(_when.getMinute()));
         }
-        minutes.setMinWidth(40);
+
+        minutes.setStyle("-fx-font: 11 arial");
+        minutes.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px");
+        minutes.setEditable(true);
+        input_validation(minutes, false, addEvent);
 
         Pane spacer1 = new Pane();
         spacer1.setMinWidth(10);
         Pane spacer2 = new Pane();
         spacer2.setMinWidth(10);
 
-        AtomicBoolean is_am = new AtomicBoolean(when.getHour() < 12);    // fancy am/pm button stuff
+        AtomicBoolean is_am = new AtomicBoolean(_when.getHour() < 12);    // fancy am/pm button stuff
 
         Button am_button = new Button("AM");
         am_button.setMinSize(25,15);
@@ -126,14 +151,12 @@ public class EventWindow {
             am_button.setFont(Font.font("Arial", FontWeight.LIGHT,10));
         }
 
-
         am_button.setOnAction(e -> {
             is_am.set(true);
             am_button.setBackground(vis);
             am_button.setFont(Font.font("Arial", FontWeight.BOLD,10.5));
             pm_button.setBackground(inv);
             pm_button.setFont(Font.font("Arial", FontWeight.LIGHT,10));
-
         });
         pm_button.setOnAction(e-> {
             is_am.set(false);
@@ -145,8 +168,6 @@ public class EventWindow {
         pickDateTime.getChildren().addAll(date, spacer1, hours, colon, minutes, spacer2, am_button, pm_button);
         pickDateTime.setAlignment(Pos.CENTER);
 
-        Button addEvent = new Button("Add Event");
-
         //sets 'enter' keystroke to click button
         addEvent.isDefaultButton();
 
@@ -154,15 +175,15 @@ public class EventWindow {
         addEvent.setOnMouseClicked(new EventHandler<>() {
             @Override
             public void handle(MouseEvent event) {
-                setValues(eventTitle, eventDes, date, hours.getValue().toString(), minutes.getValue().toString(), stage);
+                setValues(eventTitle, eventDes, date, hours.getValue(), minutes.getValue(), stage);
             }
         });
 
         addEvent.setOnKeyPressed(new EventHandler<>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    setValues(eventTitle, eventDes, date, hours.getValue().toString(), minutes.getValue().toString(), stage);
+                if (event.getCode() == KeyCode.ENTER && !addEvent.isDisabled()) {
+                    setValues(eventTitle, eventDes, date, hours.getValue(), minutes.getValue(), stage);
                 }
             }
         });
@@ -181,44 +202,96 @@ public class EventWindow {
         stage.show();
     }
 
-    private void setValues(TextArea tits, TextArea dets, DatePicker day, String hours, String minutes, Stage stage) {
-        title = tits.getText();
-        details = dets.getText();
-        int h = 4, m = 20;
-        try  {
-            h = Integer.parseInt(hours);
-            m = Integer.parseInt(minutes);
+    /**
+     * checks input for hours and minute combo box
+     * @param box combo box (hours/minutes) that's to be visually changed
+     * @param isHours is hours or minutes
+     * @param addEventButton link to add_event button that's to be greyed out if the input is invalid
+     */
+    private void input_validation(ComboBox box, boolean isHours, Button addEventButton) {
+        TextField editor = box.getEditor();
+        editor.setOnKeyTyped(e -> {
+            char val = e.getCharacter().charAt(0);
+            if (editor.getText().length() > 2 || (int) val < 48 || (int) val > 57) {                   // is a number, not > 2 chars
+                editor.setText(editor.getText(0, Integer.max(editor.getText().length()-1, 0)));
+                editor.requestFocus();
+                editor.end();
+                if (!addEventButton.isDisabled()) {
+                    Timeline wait = new Timeline(
+                            new KeyFrame(Duration.ZERO, evt -> box.setStyle("-fx-border-color: red; -fx-border-width: 1px 1px 1px 1px")),
+                            new KeyFrame(Duration.seconds(.5), evt -> box.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px"))
+                    );
+                    wait.play();
+                }
+            }
+            int p = 999;
+            if (editor.getText().length() > 0) {
+                p = Integer.parseInt(editor.getText());
+            }
+            if (isHours) {
+                if (p < 1 || p > 12) {
+                    addEventButton.setDisable(true);
+                    box.setStyle("-fx-border-color: red; -fx-border-width: 1px 1px 1px 1px");
+                }
+                else {
+                    addEventButton.setDisable(false);
+                    box.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px");
+                }
+            }
+            else {
+                if (p < 0 || p > 59) {
+                    addEventButton.setDisable(true);
+                    box.setStyle("-fx-border-color: red; -fx-border-width: 1px 1px 1px 1px");
+                }
+                else {
+                    addEventButton.setDisable(false);
+                    box.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px");
+                }
+            }
+        });
+    }
+
+    /**
+     *
+     * @param t title of event
+     * @param d details of event
+     * @param day day of which the event is on
+     * @param hours hour of the event
+     * @param minutes minute of the event
+     * @param stage stage for the event window
+     */
+    private void setValues(TextArea t, TextArea d, DatePicker day, String hours, String minutes, Stage stage) {
+        _title = t.getText();
+        _details = d.getText();
+        int h = 4, m = 20;      // default time, can be anything
+
+        h = Integer.parseInt(hours);                // ensure is integer
+        m = Integer.parseInt(minutes);
+        try {
+            _when = LocalDateTime.of(day.getValue().getYear(), day.getValue().getMonthValue(), day.getValue().getDayOfMonth(), h, m);        // ensure is valid time
             stage.close();
-        } catch (NumberFormatException nfe) {
+        } catch (DateTimeException dte) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Invalid Format!!");
             alert.setHeaderText(null);
-            alert.setContentText("An integer must be entered for the time!");
+            alert.setContentText("Hours must be between 1 and 12, and minutes must be between 0 and 60!");
             alert.setResizable(true);
             alert.onShownProperty().addListener(e -> {
                 Platform.runLater(() -> alert.setResizable(false));
             });
             alert.showAndWait();
         }
-        when = LocalDateTime.of(day.getValue().getYear(), day.getValue().getMonthValue(), day.getValue().getDayOfMonth(), h, m);
+
         consoleTest();
     }
 
+
+    /**
+     * for debugging
+     */
     private void consoleTest() {
-        System.out.println("EVENT DATE: " + getWhen());
-        System.out.println("EVENT TITLE: " + getTitle());
-        System.out.println("EVENT DETAILS: " + getDetails());
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public LocalDateTime getWhen() {
-        return when;
+        System.out.println("EVENT DATE: " + _when);
+        System.out.println("EVENT TITLE: " + _title);
+        System.out.println("EVENT DETAILS: " + _details);
     }
 }

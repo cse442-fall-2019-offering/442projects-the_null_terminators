@@ -1,13 +1,8 @@
 package edu.buffalo.cse442.nullterminators;
 
-import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
@@ -16,86 +11,86 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 public class DateNode extends AnchorPane {
 
-    private LocalDate date;
-    private Label dateView;
-    private Button add_event;
+    private LocalDate _date;
+    private Label _dateView;
+    private Button _addEvent;
 
-    private VBox storage;
+    private VBox _storage;
 
     DateNode(Node... children) {
         super(children);
-        dateView = new Label();
-        dateView.setFont(Font.font("Arial", FontWeight.BOLD, 13));
-        add_event = new Button("+");
-        add_event.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 18));
-        add_event.setTextFill(Color.DEEPSKYBLUE);
-        add_event.setStyle("-fx-background-color: transparent; -fx-padding: 0 3 0 3;");
-        add_event.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                new EventWindow();
-            }
+        _dateView = new Label();
+        _dateView.setFont(Font.font("Arial", FontWeight.BOLD, 13));
+        _addEvent = new Button("+");
+        _addEvent.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        _addEvent.setTextFill(Color.DEEPSKYBLUE);
+        _addEvent.setStyle("-fx-background-color: transparent; -fx-padding: 0 3 0 3;");
+        _addEvent.setOnAction(e -> {
+                new EventWindow(_date.atTime(4,20), "", "");
         });
 
-        add_event.setOpacity(0.0);
-
-        this.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean show) -> {
+        _addEvent.setOpacity(0.0);
+        this.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean show) -> {       // button shows when hovering over this DateNode's box
             if (show) {
-                add_event.setOpacity(1.0);
+                _addEvent.setOpacity(1.0);
             } else {
-                add_event.setOpacity(0.0);
+                _addEvent.setOpacity(0.0);
             }
         });
 
-        storage = new VBox();
-
-        this.setTopAnchor(storage, 0.0);
-        this.setBottomAnchor(storage, 0.0);
-        this.setRightAnchor(storage, 0.0);
-        this.setLeftAnchor(storage, 0.0);
+        _storage = new VBox();                           // vbox that holds date, add button, and events
+        this.setTopAnchor(_storage, 0.0);
+        this.setBottomAnchor(_storage, 0.0);
+        this.setRightAnchor(_storage, 0.0);
+        this.setLeftAnchor(_storage, 0.0);
 
         HBox date = new HBox();
         Pane spacer1 = new Pane();
         HBox.setHgrow(spacer1, Priority.ALWAYS);
-        date.getChildren().addAll(dateView, spacer1, add_event);
+        date.getChildren().addAll(_dateView, spacer1, _addEvent);
 
-        storage.getChildren().add(date);
-        this.getChildren().add(storage);
+        _storage.getChildren().add(date);
+        this.getChildren().add(_storage);
     }
+
+    /**
+     * function that gets and returns date of current DateNode
+     * @return
+     */
     public LocalDate getDate() {
-        return date;
+        return _date;
     }
 
+    /**
+     * sets function that draws the day number on the current grid - sets colors for current days, and days passed
+     * @param setDate date to be drawn onto the grid
+     */
     void setDate(LocalDate setDate) {
-        date = setDate;
-        if (setDate.isBefore(LocalDate.now())) {
+        _date = setDate;
+        if (setDate.isBefore(LocalDate.now())) {    // set color for previous days
             BackgroundFill color = new BackgroundFill(Color.GAINSBORO, CornerRadii.EMPTY, Insets.EMPTY);
             this.setBackground(new Background(color));
         }
-        else if (setDate.compareTo(LocalDate.now()) == 0) {
+        else if (setDate.compareTo(LocalDate.now()) == 0) {     // set color for current day
             BackgroundFill color = new BackgroundFill(Color.CORNFLOWERBLUE, CornerRadii.EMPTY, Insets.EMPTY);
             this.setBackground(new Background(color));
-
-            // TODO: actually not todo, color just more noticebale. THIS IS TEMPORARY
-            // this format could be transformed into {time : (event[1], event[2], ...)}
-            LocalDateTime temp = LocalDateTime.now().minusHours(3);
-            event(temp, "Wake up", "Gotta wake up eventually..");
-            event(temp.plusMinutes(13), "Poop", "You ate a lot of snacks at night, clear out!!");
-            event(temp.plusMinutes(45), "Eat some breakfast", "You just cleared out last night's snacks!! LOAD UP!!!");
-            event(temp.plusMinutes(59), "Go back to sleep", "LOADING UP IS A LOT OF WORK!!! NAP TIME!!!");
-            // TODO: add previously stored events
         }
         else {
+            // TODO: THEMEING - set color for future days
 //            BackgroundFill color = new BackgroundFill(Color.GAINSBORO, CornerRadii.EMPTY, Insets.EMPTY);
 //            this.setBackground(new Background(color));
         }
-        dateView.setText(" " + date.getDayOfMonth());
+        _dateView.setText(" " + _date.getDayOfMonth());
     }
 
+    /**
+     * function for formatting a time value to a string
+     * @param time time to be formatted
+     * @return a string in normal time format
+     */
     private String formatTime(LocalDateTime time) {
         int unf_hr = time.getHour();
         int unf_min = time.getMinute();
@@ -112,7 +107,12 @@ public class DateNode extends AnchorPane {
     }
 
 
-    // using LocalDateTime.parse(String)
+    /**
+     * function that draws events onto the calendar grid
+     * @param time  when the event is - in LocalDateTime format, but time is parsed out
+     * @param event event title
+     * @param details event details
+     */
     private void event(LocalDateTime time, String event, String details) {
         Button adding = new Button(formatTime(time) + " - " + event);
         HBox.setHgrow(adding, Priority.ALWAYS);
@@ -132,7 +132,7 @@ public class DateNode extends AnchorPane {
             }
         });
 
-        storage.getChildren().add(adding);
+        _storage.getChildren().add(adding);
     }
 
 }
