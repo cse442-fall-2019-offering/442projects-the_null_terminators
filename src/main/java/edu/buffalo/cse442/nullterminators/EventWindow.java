@@ -175,23 +175,17 @@ public class EventWindow {
         addEvent.setOnMouseClicked(new EventHandler<>() {
             @Override
             public void handle(MouseEvent event) {
-<<<<<<< 98211e9504aae2519ce5f7dc71911c5fdffecaf0
                 setValues(eventTitle, eventDes, date, hours.getValue(), minutes.getValue(), stage);
-                Database.addEvent(getTitle(), getWhen().toString(), getDetails());
                 stage.close();
->>>>>>> Add functionality to Add Event window #25
             }
         });
 
         addEvent.setOnKeyPressed(new EventHandler<>() {
             @Override
             public void handle(KeyEvent event) {
-<<<<<<< 98211e9504aae2519ce5f7dc71911c5fdffecaf0
                 if (event.getCode() == KeyCode.ENTER && !addEvent.isDisabled()) {
                     setValues(eventTitle, eventDes, date, hours.getValue(), minutes.getValue(), stage);
-                    Database.addEvent(getTitle(), getWhen().toString(), getDetails());
                     stage.close();
->>>>>>> Add functionality to Add Event window #25
                 }
             }
         });
@@ -290,6 +284,7 @@ public class EventWindow {
             alert.showAndWait();
         }
 
+        Database.addEvent(_title, _when.toString(), _details);
         consoleTest();
     }
 

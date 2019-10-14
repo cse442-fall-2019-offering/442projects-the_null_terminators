@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/442projects-the_null_terminators.iml" filepath="$PROJECT_DIR$/.idea/442projects-the_null_terminators.iml" group="442projects-the_null_terminators" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/442projects-the_null_terminators.main.iml" filepath="$PROJECT_DIR$/.idea/modules/442projects-the_null_terminators.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/442projects-the_null_terminators.test.iml" filepath="$PROJECT_DIR$/.idea/modules/442projects-the_null_terminators.test.iml" />
+    </modules>
+  </component>
+</project>
