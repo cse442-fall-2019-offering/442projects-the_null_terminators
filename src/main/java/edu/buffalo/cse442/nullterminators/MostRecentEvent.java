@@ -14,7 +14,7 @@ import javafx.util.Duration;
 import java.time.LocalDateTime;
 
 /**
- * class that creates the GUI for showing the Most Recent Event in the toolbar section 
+ * class that creates the GUI for showing the Most Recent Event in the toolbar section
  */
 public class MostRecentEvent extends Pane {
 

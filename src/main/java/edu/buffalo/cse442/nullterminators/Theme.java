@@ -18,12 +18,12 @@ import javax.swing.plaf.ColorChooserUI;
 
 public class Theme {
 
-    private boolean dark_mode;
-    private Color highlight;
+    private boolean _darkMode;
+    private Color _highlight;
 
     public Theme() {
-        dark_mode = false;
-        highlight = Color.CORNFLOWERBLUE;
+        _darkMode = false;
+        _highlight = Color.CORNFLOWERBLUE;
     }
 
     public void openThemeEditor() {
@@ -54,6 +54,6 @@ public class Theme {
     }
 
     public Color getHighlight() {
-        return highlight;
+        return _highlight;
     }
 }

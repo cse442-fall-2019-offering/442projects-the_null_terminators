@@ -11,10 +11,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class DateNode extends AnchorPane {
 
     private LocalDate _date;
+    private ArrayList<Event> _events;
+
     private Label _dateView;
     private Button _addEvent;
 
@@ -91,7 +96,7 @@ public class DateNode extends AnchorPane {
      * @param time time to be formatted
      * @return a string in normal time format
      */
-    private String formatTime(LocalDateTime time) {
+    private String formatTime(LocalTime time) {
         int unf_hr = time.getHour();
         int unf_min = time.getMinute();
         String hours = Integer.toString(unf_hr);
@@ -106,33 +111,48 @@ public class DateNode extends AnchorPane {
         return hours + ":" + minutes;
     }
 
-
     /**
-     * function that draws events onto the calendar grid
-     * @param time  when the event is - in LocalDateTime format, but time is parsed out
-     * @param event event title
-     * @param details event details
+     * function that draws all events from ArrayList _events to this node
      */
-    private void event(LocalDateTime time, String event, String details) {
-        Button adding = new Button(formatTime(time) + " - " + event);
-        HBox.setHgrow(adding, Priority.ALWAYS);
-        adding.setPadding(new Insets(0, 0, 0, 0));
-        adding.setFont(Font.font("Arial", FontWeight.BOLD,12));
-        adding.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
+    private void drawEvents() {
+        clearEvents();
+        fetchEvents();
+        for (Event e : _events) {
+            // TODO: add multiple events IN ORDER
+            Button adding = new Button(formatTime(e.getTime()) + " - " + e.getTitle());
+            HBox.setHgrow(adding, Priority.ALWAYS);
+            adding.setPadding(new Insets(0, 0, 0, 0));
+            adding.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+            adding.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
 
-        adding.setOnAction(e -> {
-            new EventWindow(time, event, details);
-        });
+            adding.setOnAction(evt -> {
+                new EventWindow(LocalDateTime.of(e.getDate(), e.getTime()), e.getTitle(), e.getDetails());
+            });
 
-        adding.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean show) -> {
-            if (show) {
-                adding.setBackground(new Background(new BackgroundFill(Color.DEEPSKYBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-            } else {
-                adding.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
-            }
-        });
-
-        _storage.getChildren().add(adding);
+            adding.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean show) -> {
+                if (show) {
+                    adding.setBackground(new Background(new BackgroundFill(Color.DEEPSKYBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+                } else {
+                    adding.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
+                }
+            });
+            _storage.getChildren().add(adding);
+        }
     }
 
+    /**
+     * function that fetches events from the database for current day
+     */
+    public void fetchEvents() {
+        // TODO: get events from database?
+        
+    }
+
+    /**
+     * clears the events from the Node GUI and clears list of events
+     */
+    private void clearEvents() {
+        _storage.getChildren().remove(1, _storage.getChildren().size()-1);
+        _events.clear();
+    }
 }
