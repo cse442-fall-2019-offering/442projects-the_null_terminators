@@ -125,17 +125,9 @@ public class DateNode extends AnchorPane {
             adding.setFont(Font.font("Arial", FontWeight.BOLD, 12));
             adding.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
 
-        adding.setOnAction(e -> {
-            Alert popup = new Alert(Alert.AlertType.CONFIRMATION);
-            popup.setResizable(true);
-            popup.onShownProperty().addListener(f -> {
-                Platform.runLater(() -> popup.setResizable(false));
+            adding.setOnAction(evt -> {
+                new EventWindow(LocalDateTime.of(e.getDate(), e.getTime()), e.getTitle(), e.getDetails());
             });
-            popup.setTitle("EVENT: " + event);
-            popup.setHeaderText("");
-            popup.setContentText("Test dialog for when clicking on an event on the calendar!");
-            popup.showAndWait();
-        });
 
             adding.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean show) -> {
                 if (show) {
