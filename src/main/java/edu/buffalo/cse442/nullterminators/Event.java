@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class Event {
+public class Event implements Comparable {
     private int _id;     // event id
     private String _title;
     private String _details;
@@ -39,5 +39,10 @@ public class Event {
         return _time;
     }
 
-    // TODO: sort
+    @Override
+    public int compareTo(Object o) {
+        LocalDateTime curr = LocalDateTime.of(this.getDate(), this.getTime());
+        LocalDateTime obj = LocalDateTime.of(((Event) o).getDate(), ((Event) o).getTime());
+        return curr.compareTo(obj);
+    }
 }

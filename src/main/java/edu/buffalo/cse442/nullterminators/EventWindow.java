@@ -18,15 +18,16 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EventWindow {
 
+    private DateNode _parent;
     private String _title;
     private String _details;
     private LocalDateTime _when = LocalDateTime.now();
+    private boolean _isNew;
 
     /**
      * constructor for initializing event window
@@ -34,19 +35,13 @@ public class EventWindow {
      * @param title title of the event, if available
      * @param det details for the event
      */
-    public EventWindow(LocalDateTime time, String title, String det) {
+    public EventWindow(LocalDateTime time, String title, String det, DateNode parent, boolean isNew) {
         _when = time;
         _title = title;
         _details = det;
+        _parent = parent;
+        _isNew = isNew;
 
-        setup();
-    }
-
-    /**
-     * constructor for adding new events, opens up fresh event editor window
-     */
-    public EventWindow() {
-        new EventWindow(_when, _title, _details);
         setup();
     }
 
@@ -176,7 +171,6 @@ public class EventWindow {
             @Override
             public void handle(MouseEvent event) {
                 setValues(eventTitle, eventDes, date, hours.getValue(), minutes.getValue(), stage);
-                stage.close();
             }
         });
 
@@ -185,7 +179,6 @@ public class EventWindow {
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.ENTER && !addEvent.isDisabled()) {
                     setValues(eventTitle, eventDes, date, hours.getValue(), minutes.getValue(), stage);
-                    stage.close();
                 }
             }
         });
@@ -196,7 +189,32 @@ public class EventWindow {
         titleLabel.setStyle("-fx-font: 18 arial");
         descLabel.setStyle("-fx-font: 18 arial");
 
-        frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, addEvent);
+        if (!_isNew) {
+            Button delete = new Button("Delete Event");
+            delete.setStyle("-fx-background-color: transparent;");
+            delete.setTextFill(Color.RED);
+
+            delete.setOnAction(a -> {
+                // TODO: delete event from database
+
+
+                _parent.refresh();
+            });
+
+            addEvent.setText("Update Event");
+            Button spacer = new Button("Delete Event");
+            spacer.setVisible(false);
+
+            BorderPane box = new BorderPane();
+            box.setLeft(spacer);
+            box.setCenter(addEvent);
+            box.setRight(delete);
+
+            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, box);
+        }
+        else {
+            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, addEvent);
+        }
 
         stage.setTitle("Event Editor");
         stage.setScene(new Scene(frame));
@@ -263,28 +281,21 @@ public class EventWindow {
      * @param stage stage for the event window
      */
     private void setValues(TextArea t, TextArea d, DatePicker day, String hours, String minutes, Stage stage) {
+        if (!_isNew) {
+            // TODO: delete from database, event is not new (so it's a changed event, needs to be deleted via this if statement, then readded w/ the other shit
+        }
         _title = t.getText();
         _details = d.getText();
         int h = 4, m = 20;      // default time, can be anything
 
         h = Integer.parseInt(hours);                // ensure is integer
         m = Integer.parseInt(minutes);
-        try {
-            _when = LocalDateTime.of(day.getValue().getYear(), day.getValue().getMonthValue(), day.getValue().getDayOfMonth(), h, m);        // ensure is valid time
-            stage.close();
-        } catch (DateTimeException dte) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Invalid Format!!");
-            alert.setHeaderText(null);
-            alert.setContentText("Hours must be between 1 and 12, and minutes must be between 0 and 60!");
-            alert.setResizable(true);
-            alert.onShownProperty().addListener(e -> {
-                Platform.runLater(() -> alert.setResizable(false));
-            });
-            alert.showAndWait();
-        }
 
-        Database.addEvent(_title, _when.toString(), _details);
+        _when = LocalDateTime.of(day.getValue().getYear(), day.getValue().getMonthValue(), day.getValue().getDayOfMonth(), h, m);        // ensure is valid time
+        stage.close();
+
+        Database.addEvent(_title, _when.toLocalDate() + " " + _when.toLocalTime(), _details);
+        _parent.refresh();
         consoleTest();
     }
 

@@ -18,7 +18,7 @@ import java.util.Collections;
 public class DateNode extends AnchorPane {
 
     private LocalDate _date;
-    private ArrayList<Event> _events;
+    private ArrayList<Event> _events = new ArrayList<>();
 
     private Label _dateView;
     private Button _addEvent;
@@ -34,7 +34,7 @@ public class DateNode extends AnchorPane {
         _addEvent.setTextFill(Color.DEEPSKYBLUE);
         _addEvent.setStyle("-fx-background-color: transparent; -fx-padding: 0 3 0 3;");
         _addEvent.setOnAction(e -> {
-                new EventWindow(_date.atTime(4,20), "", "");
+                new EventWindow(_date.atTime(4,20), "", "", this, true);
         });
 
         _addEvent.setOpacity(0.0);
@@ -118,7 +118,6 @@ public class DateNode extends AnchorPane {
         clearEvents();
         fetchEvents();
         for (Event e : _events) {
-            // TODO: add multiple events IN ORDER
             Button adding = new Button(formatTime(e.getTime()) + " - " + e.getTitle());
             HBox.setHgrow(adding, Priority.ALWAYS);
             adding.setPadding(new Insets(0, 0, 0, 0));
@@ -126,7 +125,7 @@ public class DateNode extends AnchorPane {
             adding.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
 
             adding.setOnAction(evt -> {
-                new EventWindow(LocalDateTime.of(e.getDate(), e.getTime()), e.getTitle(), e.getDetails());
+                new EventWindow(LocalDateTime.of(e.getDate(), e.getTime()), e.getTitle(), e.getDetails(), this, false);
             });
 
             adding.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean show) -> {
@@ -143,16 +142,29 @@ public class DateNode extends AnchorPane {
     /**
      * function that fetches events from the database for current day
      */
-    public void fetchEvents() {
-        // TODO: get events from database?
+    private void fetchEvents() {
+        ArrayList<String[]> db_res = Database.getEvents(_date + "00:00", _date + "24:00");
+        for (String[] e : db_res) {
+            // TODO: parse database results and add to _events
 
+
+            Event evt = new Event(-1, "temp", "temp", LocalDateTime.now());
+            _events.add(evt);
+        }
+        Collections.sort(_events);
     }
 
     /**
      * clears the events from the Node GUI and clears list of events
      */
     private void clearEvents() {
-        _storage.getChildren().remove(1, _storage.getChildren().size()-1);
+        if (_storage.getChildren().size() > 1) {
+            _storage.getChildren().remove(1, _storage.getChildren().size()-1);
+        }
         _events.clear();
+    }
+
+    public void refresh() {
+        drawEvents();
     }
 }
