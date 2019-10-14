@@ -59,6 +59,7 @@ public class EventWindow {
             @Override
             public void handle(MouseEvent event) {
                 setValues(eventTitle, eventDes, date);
+                Database.addEvent(getTitle(), getWhen().toString(), getDetails());
                 stage.close();
             }
         });
@@ -68,6 +69,7 @@ public class EventWindow {
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.ENTER) {
                     setValues(eventTitle, eventDes, date);
+                    Database.addEvent(getTitle(), getWhen().toString(), getDetails());
                     stage.close();
                 }
             }
