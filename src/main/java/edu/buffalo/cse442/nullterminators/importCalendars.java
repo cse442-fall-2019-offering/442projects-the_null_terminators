@@ -14,11 +14,20 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.net.URL;
 
+/**
+ * class used to import calendars from external sources
+ *
+ * NOT YET IMPLEMENTED
+ */
 public class importCalendars {
+
     public importCalendars() {
 
     }
 
+    /**
+     * sets up GUI for calendar imports
+     */
     public void window() {
         Stage stage = new Stage();
 //        stage.setTitle("Import calendars..");

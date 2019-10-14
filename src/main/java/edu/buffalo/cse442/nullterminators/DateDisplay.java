@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 public class DateDisplay {
 
-    @FXML private Text dateDisplayText;
+    @FXML private Text _dateDisplayText;
 
     public DateDisplay() {
 
@@ -16,16 +16,7 @@ public class DateDisplay {
 
     public void updateDateText(LocalDate date) {
         String month = date.format(DateTimeFormatter.ofPattern("LLLL yyyy"));
-
-        // will do later if my heart is feelin it
-        /*
-        switch(month) {
-            case "January":
-
-        }
-
-        */
-        dateDisplayText.setText(month);
+        _dateDisplayText.setText(month);
     }
 
     @FXML

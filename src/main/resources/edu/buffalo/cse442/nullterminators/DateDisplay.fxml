@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <AnchorPane prefHeight="35.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.buffalo.cse442.nullterminators.DateDisplay">
    <children>
-      <Text fx:id="dateDisplayText" layoutY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="600.0" y="35.0">
+      <Text fx:id="_dateDisplayText" layoutY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" y="35.0">
          <font>
             <Font size="35.0" />
          </font>

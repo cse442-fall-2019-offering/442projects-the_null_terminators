@@ -7,29 +7,24 @@ import javafx.scene.control.MenuItem;
 import java.time.LocalDate;
 
 public class MainWindow {
-    @FXML private DotwNode dotw;
-    @FXML private CalendarNode calendarGrid;
-    @FXML private DateDisplay dateDisplayController;
-    @FXML private Button before;
-    @FXML private Button today;
-    @FXML private Button after;
-    /*
-    @FXML private Button weekViewButton;
-    @FXML private Button monthViewButton;
-    @FXML private Button dayViewButton;
-     */
+    @FXML private DotwNode _dotw;
+    @FXML private CalendarNode _calendarGrid;
+    @FXML private DateDisplay _dateDisplayController;
+    @FXML private Button _before;
+    @FXML private Button _today;
+    @FXML private Button _after;
 
-    @FXML private MenuItem RESET;
+    @FXML private MostRecentEvent _mre;
 
+    @FXML private MenuItem _weekViewButton;
+    @FXML private MenuItem _monthViewButton;
+    @FXML private MenuItem _dayViewButton;
+    @FXML private MenuItem _ubImport;
+    @FXML private MenuItem _importCal;
+    @FXML private MenuItem _themes;
 
-    @FXML private MenuItem weekViewButton;
-    @FXML private MenuItem monthViewButton;
-    @FXML private MenuItem dayViewButton;
-    @FXML private MenuItem ubImport;
-    @FXML private MenuItem importCal;
-
-    private LocalDate date = LocalDate.now();
-    private CalendarNode.VIEW view = CalendarNode.VIEW.MONTH;
+    private LocalDate _date = LocalDate.now();
+    private CalendarNode.VIEW _view = CalendarNode.VIEW.MONTH;
 
 
     public MainWindow() {
@@ -38,45 +33,53 @@ public class MainWindow {
 
     @FXML
     void initialize() {
-        dotw.show();
-        dateDisplayController.updateDateText(LocalDate.now());
+        _dotw.show();
+        _dateDisplayController.updateDateText(LocalDate.now());
 
-        before.setOnAction(e -> {
+        _before.setOnAction(e -> {
             switchHelper(-1);
-            dateDisplayController.updateDateText(date);
-            calendarGrid.change(view, date);
+            _dateDisplayController.updateDateText(_date);
+            _calendarGrid.change(_view, _date);
         });
 
-        today.setOnAction(e -> {
-            date = LocalDate.now();
-            dateDisplayController.updateDateText(date);
-            calendarGrid.change(view, date);
+        _today.setOnAction(e -> {
+            _date = LocalDate.now();
+            _dateDisplayController.updateDateText(_date);
+            _calendarGrid.change(_view, _date);
         });
 
-        after.setOnAction(e -> {
+        _after.setOnAction(e -> {
             switchHelper(1);
-            dateDisplayController.updateDateText(date);
-            calendarGrid.change(view, date);
+            _dateDisplayController.updateDateText(_date);
+            _calendarGrid.change(_view, _date);
         });
 
-        weekViewButton.setOnAction(e -> {
-            dotw.show();
-            view = CalendarNode.VIEW.WEEK;
-            calendarGrid.change(view, date);
+        _weekViewButton.setOnAction(e -> {
+            _dotw.show();
+            _view = CalendarNode.VIEW.WEEK;
+            _calendarGrid.change(_view, _date);
         });
-        monthViewButton.setOnAction(e -> {
-            dotw.show();
-            view = CalendarNode.VIEW.MONTH;
-            calendarGrid.change(view, date);
+        _monthViewButton.setOnAction(e -> {
+            _dotw.show();
+            _view = CalendarNode.VIEW.MONTH;
+            _calendarGrid.change(_view, _date);
         });
-        dayViewButton.setOnAction(e -> {
-            dotw.clear();
-            view = CalendarNode.VIEW.DAY;
-            calendarGrid.change(view, date);
+        _dayViewButton.setOnAction(e -> {
+            _dotw.hide();
+            _view = CalendarNode.VIEW.DAY;
+            _calendarGrid.change(_view, _date);
         });
-
+/*
         ubImport.setOnAction(e -> {
             //new importUBCal().window();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Featuring coming soon!!");
+            alert.setHeaderText(null);
+            alert.setContentText("Feature coming soon!!");
+            alert.onShownProperty().addListener(x -> {
+                Platform.runLater(() -> alert.setResizable(false));
+            });
+            alert.showAndWait();
         });
 
         RESET.setOnAction(e -> {
@@ -84,8 +87,21 @@ public class MainWindow {
         });
         importCal.setOnAction(e -> {
             //new importCalendars().window();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Featuring coming soon!!");
+            alert.setHeaderText(null);
+            alert.setContentText("Feature coming soon!!");
+            alert.onShownProperty().addListener(x -> {
+                Platform.runLater(() -> alert.setResizable(false));
+            });
+            alert.showAndWait();
         });
 
+        themes.setOnAction(e -> {
+            new Theme().openThemeEditor();
+        });
+
+ */
     }
 
     /** if dir = -1:
@@ -94,27 +110,26 @@ public class MainWindow {
      *      go forward
      */
     private void switchHelper(int dir) {
-        switch(view) {
+        switch(_view) {
             case MONTH: {
-                System.out.println(date);
                 if (dir == 1) {
-                   date = date.plusMonths(1);
+                   _date = _date.plusMonths(1);
                 } else {
-                    date = date.minusMonths(1);
+                    _date = _date.minusMonths(1);
                 }}
                 break;
             case WEEK: {
                 if (dir == 1) {
-                    date = date.plusWeeks(1);
+                    _date = _date.plusWeeks(1);
                 } else {
-                    date = date.minusWeeks(1);
+                    _date = _date.minusWeeks(1);
                 }}
                 break;
             case DAY: {
                 if (dir == 1) {
-                    date = date.plusDays(1);
+                    _date = _date.plusDays(1);
                 } else {
-                    date = date.minusDays(1);
+                    _date = _date.minusDays(1);
                 }}
                 break;
         }

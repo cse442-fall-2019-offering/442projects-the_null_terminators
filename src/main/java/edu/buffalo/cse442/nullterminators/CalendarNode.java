@@ -8,6 +8,10 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+
+/**
+ * class that sets up the main grid - day/week/month view
+ */
 public class CalendarNode extends GridPane {
     private ArrayList<ArrayList<DateNode>> dates = new ArrayList<>();
     private LocalDate offset = LocalDate.now();
@@ -18,6 +22,11 @@ public class CalendarNode extends GridPane {
         DAY
     }
 
+    /**
+     * function that adds constraints for the grid dependent on the view
+     * @param rows number of rows (1 or 5)
+     * @param cols number of columns (1 or 7)
+     */
     private void AddRowsAndCols(int rows, int cols) {
         for (int i = 0; i < rows + 1; ++i) {
             RowConstraints r_add = new RowConstraints();
@@ -31,7 +40,11 @@ public class CalendarNode extends GridPane {
         }
     }
 
-    private void calculateDateRange(VIEW view, LocalDate firstDay) {
+    /**
+     * calculates range of days that needs to be drawn on, adds DateNodes to each grid accordingly
+     * @param firstDay first day that needs to be drawn on
+     */
+    private void calculateDateRange(LocalDate firstDay) {
         int dayOffset = 0;
         int init_j = firstDay.getDayOfWeek().getValue();
         dates.add(new ArrayList<>());
@@ -58,8 +71,12 @@ public class CalendarNode extends GridPane {
         }
     }
 
+    /**
+     * sets that day that needs to be shown
+     * @param view view required to calculate how many days
+     * @param date date that it "starts" on
+     */
     private void setDateRange(VIEW view, LocalDate date) {
-        System.out.println(date);
         switch(view) {
             case MONTH:
                 String month = Integer.toString(date.getMonthValue());
@@ -67,7 +84,7 @@ public class CalendarNode extends GridPane {
                     month = "0" + date.getMonthValue();
                 }
                 LocalDate firstDayOfMonth = LocalDate.parse(date.getYear() + "-" + month + "-" + "01");
-                calculateDateRange(view, firstDayOfMonth);
+                calculateDateRange(firstDayOfMonth);
                 break;
             case DAY:
                 dates.add(new ArrayList<>());
@@ -87,11 +104,16 @@ public class CalendarNode extends GridPane {
                     }
                 }
                 else {}     // do nothing
-                calculateDateRange(VIEW.WEEK, firstDay);
+                calculateDateRange(firstDay);
                 break;
         }
     }
 
+    /**
+     * function that changes views based on the date or view required
+     * @param viewOfCalendar DAY, WEEK, MONTH
+     * @param toDate date to be switched to
+     */
     public void change(VIEW viewOfCalendar, LocalDate toDate) {
         this.getChildren().clear();
         dates.clear();
