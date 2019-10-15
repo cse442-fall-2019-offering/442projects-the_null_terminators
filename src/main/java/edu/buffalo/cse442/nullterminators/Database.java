@@ -73,6 +73,30 @@ public class Database {
         return id;
     }
 
+    // Get latest event added to the database
+    // RETURNS: String[]
+    // Array items: Unique ID, Event Name, Event Date/Time, Event Description
+    public static String[] getLatestEvent() {
+        Connection conn = openConnection();
+        String[] retVal = new String[4];
+
+        String sql = "SELECT * FROM events ORDER BY id DESC LIMIT 1";
+        try {
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            while (rs.next()) {
+                retVal[0] = Integer.toString(rs.getInt("id"));
+                retVal[1] = rs.getString("name");
+                retVal[2] = rs.getString("datetime");
+                retVal[3] = rs.getString("description");
+            }
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return retVal;
+    }
+
     // Queries database for events between given date/time range
     // Date/time must be in following format: YYYY-MM-DD HH:MM
     // RETURNS: ArrayList<String[]>
