@@ -22,13 +22,43 @@ public class CalendarNode extends GridPane {
         DAY
     }
 
+    public CalendarNode() {
+        super();
+        change(VIEW.MONTH, LocalDate.now());
+    }
+
     /**
-     * function that adds constraints for the grid dependent on the view
+     * function that changes views based on the date or view required
+     * @param viewOfCalendar DAY, WEEK, MONTH
+     * @param toDate date to be switched to
+     */
+    public void change(VIEW viewOfCalendar, LocalDate toDate) {
+        this.getChildren().clear();
+        dates.clear();
+        this.getRowConstraints().clear();
+        this.getColumnConstraints().clear();
+        switch(viewOfCalendar) {
+            case MONTH:
+                AddRowsAndCols(5, 7);
+                break;
+            case WEEK:
+                AddRowsAndCols(1, 7);
+                break;
+            case DAY:
+                AddRowsAndCols(1,1);
+                break;
+        }
+        setDateRange(viewOfCalendar, toDate);
+    }
+
+
+    /**
+     * helper function that adds constraints for the grid dependent on the view
      * @param rows number of rows (1 or 5)
      * @param cols number of columns (1 or 7)
      */
     private void AddRowsAndCols(int rows, int cols) {
-        for (int i = 0; i < rows + 1; ++i) {
+        for (int i = 0; i < rows; ++i) {
             RowConstraints r_add = new RowConstraints();
             r_add.setPercentHeight(Double.valueOf(1.0/rows) * 100);
             this.getRowConstraints().add(r_add);
@@ -51,7 +81,7 @@ public class CalendarNode extends GridPane {
         if (init_j == 7) {
             init_j = 0;
         }
-        for (int i = 0; i < this.getRowCount() - 1; i++) {
+        for (int i = 0; i < this.getRowCount(); i++) {
             dates.add(new ArrayList<>());
             for(int j = 0; j < this.getColumnCount(); j++) {
                 dates.get(i).add(new DateNode());
@@ -109,32 +139,4 @@ public class CalendarNode extends GridPane {
         }
     }
 
-    /**
-     * function that changes views based on the date or view required
-     * @param viewOfCalendar DAY, WEEK, MONTH
-     * @param toDate date to be switched to
-     */
-    public void change(VIEW viewOfCalendar, LocalDate toDate) {
-        this.getChildren().clear();
-        dates.clear();
-        this.getRowConstraints().clear();
-        this.getColumnConstraints().clear();
-        switch(viewOfCalendar) {
-            case MONTH:
-                AddRowsAndCols(5, 7);
-                break;
-            case WEEK:
-                AddRowsAndCols(1, 7);
-                break;
-            case DAY:
-                AddRowsAndCols(1,1);
-                break;
-        }
-        setDateRange(viewOfCalendar, toDate);
-    }
-
-    public CalendarNode() {
-        super();
-        change(VIEW.MONTH, LocalDate.now());
-    }
 }

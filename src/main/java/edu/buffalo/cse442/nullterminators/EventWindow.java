@@ -2,43 +2,31 @@ package edu.buffalo.cse442.nullterminators;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EventWindow {
 
     private DateNode _parent;
-    private String _title;
-    private String _details;
-    private LocalDateTime _when = LocalDateTime.now();
+    private Event _event = new Event(-1, "", "", LocalDateTime.now());
     private boolean _isNew;
 
     /**
      * constructor for initializing event window
-     * @param time time at which the event is held, if available
-     * @param title title of the event, if available
-     * @param det details for the event
      */
-    public EventWindow(LocalDateTime time, String title, String det, DateNode parent, boolean isNew) {
-        _when = time;
-        _title = title;
-        _details = det;
+    public EventWindow(Event event, DateNode parent, boolean isNew) {
+        _event = event;
         _parent = parent;
         _isNew = isNew;
 
@@ -50,135 +38,106 @@ public class EventWindow {
      */
     public void setup() {
         Stage stage = new Stage();
+        stage.setResizable(false);
 
-        VBox frame = new VBox();                                    // set up layout
+        VBox frame = new VBox();                                                 // set up layout
         frame.setPadding(new Insets(10, 20, 20,20));
         frame.setAlignment(Pos.CENTER);
         frame.setSpacing(8);
 
         Button addEvent = new Button("Add Event");
-
-        TextArea eventTitle = new TextArea(_title);                  // event title
+        addEvent.setDisable(true);
+        TextArea eventTitle = new TextArea(_event.getTitle());                  // event title
         eventTitle.setMinSize(300, 30);
         eventTitle.setMaxSize(300, 30);
-        eventTitle.setWrapText(true);
-
-        TextArea eventDes = new TextArea(_details);                  // event description
+        setMaxCharacters(eventTitle, 25);
+        eventTitle.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String t1, String t2) {
+                if (t2.equals("")) {
+                    addEvent.setDisable(true);
+                }
+                else {
+                    addEvent.setDisable(false);
+                }
+            }
+        });
+        TextArea eventDes = new TextArea(_event.getDetails());                  // event description
         eventDes.setMinSize(400, 200);
         eventDes.setMaxSize(400, 200);
-        eventDes.setWrapText(true);
+        setMaxCharacters(eventDes, 500);
 
-
-        HBox pickDateTime = new HBox();                              // picking date
-        DatePicker date = new DatePicker(_when.toLocalDate());
+        HBox pickDateTime = new HBox();                                          // picking date
+        DatePicker date = new DatePicker(_event.getDate());
         date.setMaxWidth(105);
-        date.setValue(_when.toLocalDate());
+        date.setValue(_event.getDate());
 
-        ComboBox<String> hours = new ComboBox();                     // pick what hour event is
+        ComboBox<String> hours = new ComboBox();                                 // pick what hour event is
         hours.setMinWidth(55);
         hours.setMaxWidth(55);
         hours.getItems().addAll("1","2","3","4","5","6","7","8","9","10","11","12");
-        if (_when.getHour() > 12) {
-            hours.setValue(Integer.toString(_when.getHour() - 12));
+        if (_event.getTime().getHour() > 12) {
+            hours.setValue(Integer.toString(_event.getTime().getHour() - 12));
         }
-        else if (_when.getHour() == 0) {
+        else if (_event.getTime().getHour() == 0) {
             hours.setValue("12");
         }
         else {
-            hours.setValue(Integer.toString(_when.getHour()));
+            hours.setValue(Integer.toString(_event.getTime().getHour()));
         }
 
-        hours.setStyle("-fx-font: 11 arial");
-        hours.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px");
+        hours.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px; -fx-font: 11 arial");
         hours.setEditable(true);
-        input_validation(hours, true, addEvent);
+        scrollToEdit(hours, 1, 12);
+        inputValidation(hours, true, addEvent);
 
         Label colon = new Label(" : ");
 
-        ComboBox<String> minutes = new ComboBox();                  // picking minute of event
+        ComboBox<String> minutes = new ComboBox();                              // picking minute of event
         minutes.setMinWidth(55);
         minutes.setMaxWidth(55);
         minutes.getItems().addAll("00", "15", "30", "45");
-        if (_when.getMinute() < 10) {
-            minutes.setValue("0" + _when.getMinute());
+        if (_event.getTime().getMinute() < 10) {
+            minutes.setValue("0" + _event.getTime().getMinute());
         }
         else {
-            minutes.setValue(Integer.toString(_when.getMinute()));
+            minutes.setValue(Integer.toString(_event.getTime().getMinute()));
         }
 
-        minutes.setStyle("-fx-font: 11 arial");
-        minutes.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px");
+        minutes.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px; -fx-font: 11 arial;");
         minutes.setEditable(true);
-        input_validation(minutes, false, addEvent);
+        scrollToEdit(minutes, 0, 59);
+        inputValidation(minutes, false, addEvent);
 
         Pane spacer1 = new Pane();
         spacer1.setMinWidth(10);
         Pane spacer2 = new Pane();
         spacer2.setMinWidth(10);
 
-        AtomicBoolean is_am = new AtomicBoolean(_when.getHour() < 12);    // fancy am/pm button stuff
-
-        Button am_button = new Button("AM");
-        am_button.setMinSize(25,15);
-        am_button.setMaxSize(25,15);
-        am_button.setPadding(new Insets(0,0,0,0));
-        am_button.setStyle("-fx-border-color: black; -fx-border-width: .5px 0px .5px .5px");
-
-
-        Button pm_button = new Button("PM");
-        pm_button.setMinSize(25,15);
-        pm_button.setMaxSize(25,15);
-        pm_button.setPadding(new Insets(0,0,0,0));
-        pm_button.setStyle("-fx-border-color: black; -fx-border-width: .5px .5px .5px 0px");
-
-        Background vis = new Background(new BackgroundFill(Color.DEEPSKYBLUE, CornerRadii.EMPTY, Insets.EMPTY));
-        Background inv = new Background(new BackgroundFill(Color.LIGHTGREY, CornerRadii.EMPTY, Insets.EMPTY));
-        if (is_am.get()) {
-            am_button.setBackground(vis);
-            am_button.setFont(Font.font("Arial", FontWeight.BOLD,10.5));
-            pm_button.setBackground(inv);
-            pm_button.setFont(Font.font("Arial", FontWeight.LIGHT,10));
-        }
-        else {
-            pm_button.setBackground(vis);
-            pm_button.setFont(Font.font("Arial", FontWeight.BOLD,10.5));
-            am_button.setBackground(inv);
-            am_button.setFont(Font.font("Arial", FontWeight.LIGHT,10));
-        }
-
-        am_button.setOnAction(e -> {
-            is_am.set(true);
-            am_button.setBackground(vis);
-            am_button.setFont(Font.font("Arial", FontWeight.BOLD,10.5));
-            pm_button.setBackground(inv);
-            pm_button.setFont(Font.font("Arial", FontWeight.LIGHT,10));
-        });
-        pm_button.setOnAction(e-> {
-            is_am.set(false);
-            pm_button.setBackground(vis);
-            pm_button.setFont(Font.font("Arial", FontWeight.BOLD,10.5));
-            am_button.setBackground(inv);
-            am_button.setFont(Font.font("Arial", FontWeight.LIGHT,10));
-        });
-        pickDateTime.getChildren().addAll(date, spacer1, hours, colon, minutes, spacer2, am_button, pm_button);
+        AMandPM amPM = new AMandPM(_event.getTime().getHour() < 12);
+        pickDateTime.getChildren().addAll(date, spacer1, hours, colon, minutes, spacer2, amPM);
         pickDateTime.setAlignment(Pos.CENTER);
 
         //sets 'enter' keystroke to click button
         addEvent.isDefaultButton();
 
         //set button to just close the Event Editor for now
-        addEvent.setOnMouseClicked(new EventHandler<>() {
-            @Override
-            public void handle(MouseEvent event) {
+        addEvent.setOnMouseClicked(event -> {
+            if (amPM.isAM()) {
                 setValues(eventTitle, eventDes, date, hours.getValue(), minutes.getValue(), stage);
+            }
+            else {
+                setValues(eventTitle, eventDes, date, Integer.toString(Integer.parseInt(hours.getValue()) + 12), minutes.getValue(), stage);
             }
         });
 
-        addEvent.setOnKeyPressed(new EventHandler<>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER && !addEvent.isDisabled()) {
+        addEvent.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER && !addEvent.isDisabled()) {
+                if (amPM.isAM()) {
                     setValues(eventTitle, eventDes, date, hours.getValue(), minutes.getValue(), stage);
+                }
+                else {
+                    setValues(eventTitle, eventDes, date, Integer.toString(Integer.parseInt(hours.getValue()) + 12), minutes.getValue(), stage);
                 }
             }
         });
@@ -195,8 +154,8 @@ public class EventWindow {
             delete.setTextFill(Color.RED);
 
             delete.setOnAction(a -> {
-                // TODO: delete event from database
-
+                Database.deleteEvent(_event.getID());
+                stage.close();
 
                 _parent.refresh();
             });
@@ -223,12 +182,42 @@ public class EventWindow {
     }
 
     /**
+     * helper function that allows a ComboBox to be modified with scrolling
+     * @param box ComboBox to be modified
+     */
+    private void scrollToEdit(ComboBox box, int min, int max) {
+       box.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean onButton) -> {       // button shows when hovering over this DateNode's box
+            if (onButton) {
+                box.setOnScroll(v -> {
+                    double delt = v.getDeltaY();
+                    int val = Integer.parseInt(box.getEditor().getText());
+                    if (delt < 0) {
+                        val--;
+                        if (val >= min) {
+                            box.getEditor().setText(Integer.toString(val));
+                        }
+                    }
+                    else if (delt > 0) {
+                        val++;
+                        if (val <= max) {
+                            box.getEditor().setText(Integer.toString(val));
+                        }
+                    }
+                    else {
+                        // do nothing
+                    }
+                });
+            }
+        });
+    }
+
+    /**
      * checks input for hours and minute combo box
      * @param box combo box (hours/minutes) that's to be visually changed
      * @param isHours is hours or minutes
      * @param addEventButton link to add_event button that's to be greyed out if the input is invalid
      */
-    private void input_validation(ComboBox box, boolean isHours, Button addEventButton) {
+    private void inputValidation(ComboBox box, boolean isHours, Button addEventButton) {
         TextField editor = box.getEditor();
         editor.setOnKeyTyped(e -> {
             char val = e.getCharacter().charAt(0);
@@ -282,30 +271,34 @@ public class EventWindow {
      */
     private void setValues(TextArea t, TextArea d, DatePicker day, String hours, String minutes, Stage stage) {
         if (!_isNew) {
-            // TODO: delete from database, event is not new (so it's a changed event, needs to be deleted via this if statement, then readded w/ the other shit
+            Database.deleteEvent(_event.getID());
         }
-        _title = t.getText();
-        _details = d.getText();
         int h = 4, m = 20;      // default time, can be anything
 
         h = Integer.parseInt(hours);                // ensure is integer
         m = Integer.parseInt(minutes);
+        LocalDateTime when = LocalDateTime.of(day.getValue().getYear(), day.getValue().getMonthValue(), day.getValue().getDayOfMonth(), h, m);        // ensure is valid time
 
-        _when = LocalDateTime.of(day.getValue().getYear(), day.getValue().getMonthValue(), day.getValue().getDayOfMonth(), h, m);        // ensure is valid time
         stage.close();
 
-        Database.addEvent(_title, _when.toLocalDate() + " " + _when.toLocalTime(), _details);
+        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText());
         _parent.refresh();
-        consoleTest();
     }
 
-
     /**
-     * for debugging
+     * helper function that sets maximum number of characters allowed in a textarea
+     * @param a restricted text area
+     * @param max maximum number of characters
      */
-    private void consoleTest() {
-        System.out.println("EVENT DATE: " + _when);
-        System.out.println("EVENT TITLE: " + _title);
-        System.out.println("EVENT DETAILS: " + _details);
+    private void setMaxCharacters(TextArea a, int max) {
+        a.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(final ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
+                if (a.getText().length() > max) {
+                    String s = a.getText().substring(0, max);
+                    a.setText(s);
+                }
+            }
+        });
     }
 }

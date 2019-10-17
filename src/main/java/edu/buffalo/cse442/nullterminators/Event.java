@@ -11,6 +11,13 @@ public class Event implements Comparable {
     private LocalDate _date;
     private LocalTime _time;
 
+    /**
+     * Event object to be placed into a DateNode
+     * @param id -for database use-
+     * @param title title of event
+     * @param details details of event
+     * @param when LocalDateTime, when the event is
+     */
     public Event(int id, String title, String details, LocalDateTime when) {
         _id = id;
         _title = title;

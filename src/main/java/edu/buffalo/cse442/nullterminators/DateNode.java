@@ -25,7 +25,7 @@ public class DateNode extends AnchorPane {
 
     private VBox _storage;
 
-    DateNode(Node... children) {
+    public DateNode(Node... children) {
         super(children);
         _dateView = new Label();
         _dateView.setFont(Font.font("Arial", FontWeight.BOLD, 13));
@@ -34,7 +34,7 @@ public class DateNode extends AnchorPane {
         _addEvent.setTextFill(Color.DEEPSKYBLUE);
         _addEvent.setStyle("-fx-background-color: transparent; -fx-padding: 0 3 0 3;");
         _addEvent.setOnAction(e -> {
-                new EventWindow(_date.atTime(4,20), "", "", this, true);
+                new EventWindow(new Event(-1, "", "", LocalDateTime.of(_date, LocalTime.of(4, 20))), this, true);
         });
 
         _addEvent.setOpacity(0.0);
@@ -59,6 +59,15 @@ public class DateNode extends AnchorPane {
 
         _storage.getChildren().add(date);
         this.getChildren().add(_storage);
+    }
+
+    /**
+     * function that refreshes the current DateNode with the correct events
+     */
+    public void refresh() {
+        clearEvents();
+        fetchEvents();
+        drawEvents();
     }
 
     /**
@@ -89,34 +98,13 @@ public class DateNode extends AnchorPane {
 //            this.setBackground(new Background(color));
         }
         _dateView.setText(" " + _date.getDayOfMonth());
-    }
-
-    /**
-     * function for formatting a time value to a string
-     * @param time time to be formatted
-     * @return a string in normal time format
-     */
-    private String formatTime(LocalTime time) {
-        int unf_hr = time.getHour();
-        int unf_min = time.getMinute();
-        String hours = Integer.toString(unf_hr);
-        String minutes = Integer.toString(unf_min);
-
-        if (unf_hr > 12) {
-            hours = "" + (unf_hr - 12);
-        }
-        if (unf_min < 10) {
-            minutes = "0" + unf_min;
-        }
-        return hours + ":" + minutes;
+        drawEvents();
     }
 
     /**
      * function that draws all events from ArrayList _events to this node
      */
     private void drawEvents() {
-        clearEvents();
-        fetchEvents();
         for (Event e : _events) {
             Button adding = new Button(formatTime(e.getTime()) + " - " + e.getTitle());
             HBox.setHgrow(adding, Priority.ALWAYS);
@@ -125,7 +113,7 @@ public class DateNode extends AnchorPane {
             adding.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
 
             adding.setOnAction(evt -> {
-                new EventWindow(LocalDateTime.of(e.getDate(), e.getTime()), e.getTitle(), e.getDetails(), this, false);
+                new EventWindow(e, this, false);
             });
 
             adding.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean show) -> {
@@ -143,12 +131,20 @@ public class DateNode extends AnchorPane {
      * function that fetches events from the database for current day
      */
     private void fetchEvents() {
-        ArrayList<String[]> db_res = Database.getEvents(_date + "00:00", _date + "24:00");
+        ArrayList<String[]> db_res = Database.getEvents(_date + " 00:00", _date + " 23:59");
         for (String[] e : db_res) {
-            // TODO: parse database results and add to _events
+            int id = Integer.parseInt(e[0]);
+            String name = e[1];
+            String details = e[3];
 
+            int year = Integer.parseInt(e[2].substring(0,4));
+            int month = Integer.parseInt(e[2].substring(5,7));
+            int day = Integer.parseInt(e[2].substring(8,10));
+            int hour = Integer.parseInt(e[2].substring(11,13));
+            int minute = Integer.parseInt(e[2].substring(14,16));
+            LocalDateTime when = LocalDateTime.of(year, month, day, hour, minute);
 
-            Event evt = new Event(-1, "temp", "temp", LocalDateTime.now());
+            Event evt = new Event(id, name, details, when);
             _events.add(evt);
         }
         Collections.sort(_events);
@@ -159,12 +155,36 @@ public class DateNode extends AnchorPane {
      */
     private void clearEvents() {
         if (_storage.getChildren().size() > 1) {
-            _storage.getChildren().remove(1, _storage.getChildren().size()-1);
+            _storage.getChildren().remove(1, _storage.getChildren().size());
         }
         _events.clear();
     }
 
-    public void refresh() {
-        drawEvents();
+    /**
+     * function for formatting a time value to a string
+     * @param time time to be formatted
+     * @return a string in normal time format
+     */
+    private String formatTime(LocalTime time) {
+        boolean isAM = true;
+
+        int unf_hr = time.getHour();
+        int unf_min = time.getMinute();
+        String hours = Integer.toString(unf_hr);
+        String minutes = Integer.toString(unf_min);
+
+        if (unf_hr > 12) {
+            hours = "" + (unf_hr - 12);
+            isAM = false;
+        }
+        if (unf_min < 10) {
+            minutes = "0" + unf_min;
+        }
+        if (isAM) {
+            return hours + ":" + minutes + "a";
+        }
+        else {
+            return hours + ":" + minutes + "p";
+        }
     }
 }
