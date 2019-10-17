@@ -1,20 +1,13 @@
 package edu.buffalo.cse442.nullterminators;
 
-import com.sun.javafx.scene.control.CustomColorDialog;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.skin.ColorPickerSkin;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import javax.swing.*;
-import javax.swing.plaf.ColorChooserUI;
 
 public class Theme {
 

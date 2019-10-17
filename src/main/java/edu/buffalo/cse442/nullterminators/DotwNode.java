@@ -41,19 +41,6 @@ public class DotwNode extends AnchorPane {
     }
 
     /**
-     * helper function that formats each day of the week's font
-     * @param name day of the week - monday, tuesday, wednesday...
-     * @return label with formatted string in it
-     */
-    private Label format_name(String name) {
-        Label ret = new Label(name);
-        ret.setFont(Font.font("Arial", FontWeight.BOLD, 13));
-        ret.setAlignment(Pos.CENTER);
-
-        return ret;
-    }
-
-    /**
      * function that shows THIS anchor pane - shows SMTWTF at the top
      */
     public void show() {
@@ -68,6 +55,19 @@ public class DotwNode extends AnchorPane {
      */
     public void hide() {
         _dotw.getChildren().clear();
+    }
+
+    /**
+     * helper function that formats each day of the week's font
+     * @param name day of the week - monday, tuesday, wednesday...
+     * @return label with formatted string in it
+     */
+    private Label format_name(String name) {
+        Label ret = new Label(name);
+        ret.setFont(Font.font("Arial", FontWeight.BOLD, 13));
+        ret.setAlignment(Pos.CENTER);
+
+        return ret;
     }
 }
 
