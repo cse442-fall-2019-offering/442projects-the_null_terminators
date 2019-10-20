@@ -4,11 +4,13 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -21,6 +23,8 @@ public class EventWindow {
     private DateNode _parent;
     private Event _event = new Event(-1, "", "", LocalDateTime.now());
     private boolean _isNew;
+
+
 
     /**
      * constructor for initializing event window
@@ -40,26 +44,39 @@ public class EventWindow {
         Stage stage = new Stage();
         stage.setResizable(false);
 
+        stage.setWidth(511);
+        stage.setHeight(436);
+
         VBox frame = new VBox();                                                 // set up layout
         frame.setPadding(new Insets(10, 20, 20,20));
         frame.setAlignment(Pos.CENTER);
         frame.setSpacing(8);
 
         Button addEvent = new Button("Add Event");
-        addEvent.setDisable(true);
+
         TextArea eventTitle = new TextArea(_event.getTitle());                  // event title
         eventTitle.setMinSize(300, 30);
         eventTitle.setMaxSize(300, 30);
         setMaxCharacters(eventTitle, 25);
-        eventTitle.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String t1, String t2) {
-                if (t2.equals("")) {
-                    addEvent.setDisable(true);
+
+        if (_isNew) {
+            addEvent.setDisable(true);
+            eventTitle.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String t1, String t2) {
+                    if (t2.equals("")) {
+                        addEvent.setDisable(true);
+                    }
+                    else {
+                        addEvent.setDisable(false);
+                    }
                 }
-                else {
-                    addEvent.setDisable(false);
-                }
+            });
+        }
+
+        eventTitle.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode().equals(KeyCode.ENTER)) {
+                e.consume();
             }
         });
         TextArea eventDes = new TextArea(_event.getDetails());                  // event description
@@ -115,7 +132,27 @@ public class EventWindow {
         spacer2.setMinWidth(10);
 
         AMandPM amPM = new AMandPM(_event.getTime().getHour() < 12);
-        pickDateTime.getChildren().addAll(date, spacer1, hours, colon, minutes, spacer2, amPM);
+
+        Button bspacer = new Button("Repeating..");
+        bspacer.setVisible(false);
+        Pane spacer3 = new Pane();
+        spacer3.setMinWidth(10);
+        ToggleButton recurring = new ToggleButton("Repeating..");
+        recurring.setStyle("-fx-background-color: transparent;");
+        RecurrentEvents recWin = new RecurrentEvents(_event);
+        recurring.setOnAction(e -> {
+            if (recurring.isSelected()) {
+                recurring.setStyle("-fx-background-color: lightgrey;");
+                recWin.setBounds(recurring.localToScreen(recurring.getBoundsInLocal()));
+                recWin.show();
+            }
+            else {
+                recurring.setStyle("-fx-background-color: transparent;");
+                recWin.hide();
+            }
+        });
+
+        pickDateTime.getChildren().addAll(bspacer, date, spacer1, hours, colon, minutes, spacer2, amPM, spacer3, recurring);
         pickDateTime.setAlignment(Pos.CENTER);
 
         //sets 'enter' keystroke to click button
@@ -179,8 +216,14 @@ public class EventWindow {
         stage.setScene(new Scene(frame));
 
         stage.show();
+        stage.setOnCloseRequest(e -> {
+            recWin.close();
+        });
     }
 
+    public Stage getStage() {
+        return null;
+    }
     /**
      * helper function that allows a ComboBox to be modified with scrolling
      * @param box ComboBox to be modified
@@ -218,8 +261,13 @@ public class EventWindow {
      * @param addEventButton link to add_event button that's to be greyed out if the input is invalid
      */
     private void inputValidation(ComboBox box, boolean isHours, Button addEventButton) {
+        int max, min;
+        if (isHours) {
+            min = 1; max = 12; }
+        else {
+            min = 0; max = 59; }
         TextField editor = box.getEditor();
-        editor.setOnKeyTyped(e -> {
+        editor.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             char val = e.getCharacter().charAt(0);
             if (editor.getText().length() > 2 || (int) val < 48 || (int) val > 57) {                   // is a number, not > 2 chars
                 editor.setText(editor.getText(0, Integer.max(editor.getText().length()-1, 0)));
@@ -237,25 +285,13 @@ public class EventWindow {
             if (editor.getText().length() > 0) {
                 p = Integer.parseInt(editor.getText());
             }
-            if (isHours) {
-                if (p < 1 || p > 12) {
-                    addEventButton.setDisable(true);
-                    box.setStyle("-fx-border-color: red; -fx-border-width: 1px 1px 1px 1px");
-                }
-                else {
-                    addEventButton.setDisable(false);
-                    box.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px");
-                }
+            if (p < min || p > max) {
+                addEventButton.setDisable(true);
+                box.setStyle("-fx-border-color: red; -fx-border-width: 1px 1px 1px 1px");
             }
             else {
-                if (p < 0 || p > 59) {
-                    addEventButton.setDisable(true);
-                    box.setStyle("-fx-border-color: red; -fx-border-width: 1px 1px 1px 1px");
-                }
-                else {
-                    addEventButton.setDisable(false);
-                    box.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px");
-                }
+                addEventButton.setDisable(false);
+                box.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px");
             }
         });
     }
