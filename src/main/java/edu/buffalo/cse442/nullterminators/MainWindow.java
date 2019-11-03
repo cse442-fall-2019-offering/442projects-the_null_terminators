@@ -19,6 +19,7 @@ public class MainWindow {
     @FXML private MenuItem _weekViewButton;
     @FXML private MenuItem _monthViewButton;
     @FXML private MenuItem _dayViewButton;
+    @FXML private MenuItem _clearDB;
     @FXML private MenuItem _ubImport;
     @FXML private MenuItem _importCal;
     @FXML private MenuItem _themes;
@@ -69,6 +70,13 @@ public class MainWindow {
             _view = CalendarNode.VIEW.DAY;
             _calendarGrid.change(_view, _date);
         });
+/*
+        _clearDB.setOnAction(e -> {
+            _calendarGrid.clearEvents();
+        });
+ */
+
+
 /*
         ubImport.setOnAction(e -> {
             //new importUBCal().window();

@@ -23,4 +23,13 @@ javafx {
     version = '11.0.2'
 }
 
-mainClassName = 'edu.buffalo.cse442.nullterminators.Main'
+jar {
+    manifest {
+        attributes 'Main-Class': 'edu.buffalo.cse442.nullterminators.GUI'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+mainClassName = 'edu.buffalo.cse442.nullterminators.GUI'

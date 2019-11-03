@@ -24,6 +24,9 @@ public class Main extends Application {
         scene.getStylesheets().add(getClass().getResource("main_style.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(e -> {
+            System.exit(0);
+        });
         /*
         Notification notification_demo = new Notification();
         notification_demo.setTitle("Project Grading");

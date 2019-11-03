@@ -47,7 +47,7 @@ public class MostRecentEvent extends Pane {
         String[] e = Database.getLatestEvent();
         for (String s : e) {
             if (s == null) {
-                _dayLabel.setText("You've got no events, for like, EVER!");
+                _dayLabel.setText("You have no upcoming events!");
                 return;
             }
         }

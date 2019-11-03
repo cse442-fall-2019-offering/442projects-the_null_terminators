@@ -27,6 +27,7 @@
                        <MenuItem fx:id = "_dayViewButton" mnemonicParsing="false" text="Day" />
                        <MenuItem fx:id = "_weekViewButton" mnemonicParsing="false" text="Week" />
                        <MenuItem fx:id = "_monthViewButton" mnemonicParsing="false" text="Month" />
+<!--                       <MenuItem fx:id = "_clearDB" mnemonicParsing="false" text="Clear All Events"/> -->
     <!--                   <MenuItem fx:id = "themes" mnemonicParsing="false" text="Theme Editor.."/>
                        <MenuItem fx:id = "ubImport" mnemonicParsing="false" text="Import UB Calendar.." />
                        <MenuItem fx:id = "importCal" mnemonicParsing="false" text="Import calendars.." />

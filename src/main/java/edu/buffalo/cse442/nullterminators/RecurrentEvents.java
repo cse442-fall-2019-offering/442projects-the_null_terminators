@@ -14,9 +14,8 @@ import javafx.stage.StageStyle;
 
 import java.time.LocalDateTime;
 
-public class RecurrentEvents {
+public class RecurrentEvents extends Stage {
     final double width = 398.0;
-    private Stage _stage;
     private Event _event = new Event(-1, "", "", LocalDateTime.now());
     private Bounds _loc;
 
@@ -25,37 +24,17 @@ public class RecurrentEvents {
         setup();
     }
 
-    public void show() {
-        _stage.setIconified(false);
-        _stage.show();
-    }
-
-    public void hide() {
-       _stage.setIconified(true);
-    }
-
-    public void close() {
-        _stage.close();
-    }
-
     public void setBounds(Bounds bnd) {
         _loc = bnd;
-        _stage.setX(_loc.getMaxX() - width);
-        _stage.setY(_loc.getMaxY());
+        this.setX(_loc.getMaxX() - width);
+        this.setY(_loc.getMaxY());
     }
 
     private void setup() {
-        _stage = new Stage();
-        _stage.setWidth(width);
-        _stage.setResizable(false);
-        _stage.initStyle(StageStyle.UNDECORATED);
-
-        _stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean onHidden, Boolean onShown) {
-                // TODO: something with linking it to the "Repeating.." button in EventWindow
-            }
-        });
+        this.setWidth(width);
+        this.setResizable(false);
+        this.initStyle(StageStyle.UNDECORATED);
+        this.setOpacity(.95);
 
         VBox outerFrame = new VBox();
         outerFrame.setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -88,11 +67,11 @@ public class RecurrentEvents {
         Button confirm = new Button("Confirm");
         confirm.setOnAction(e -> {
             // TODO: add listener to confirm button, sends values to the opened event window
-            _stage.close();
+            this.close();
         });
 
         outerFrame.getChildren().addAll(freqFrame, dateFrame, confirm);
 
-        _stage.setScene(new Scene(outerFrame));
+        this.setScene(new Scene(outerFrame));
     }
 }
