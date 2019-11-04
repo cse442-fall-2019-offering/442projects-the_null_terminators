@@ -179,6 +179,8 @@ public class EventWindow {
             }
         });
 
+        Button tagEditor = new Button("Tags");
+
         Label titleLabel = new Label("Event Title");
         Label descLabel = new Label("Description");
 
@@ -206,10 +208,10 @@ public class EventWindow {
             box.setCenter(addEvent);
             box.setRight(delete);
 
-            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, box);
+            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, box, tagEditor);
         }
         else {
-            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, addEvent);
+            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, addEvent, tagEditor);
         }
 
         stage.setTitle("Event Editor");

@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainWindow {
     @FXML private DotwNode _dotw;
@@ -71,8 +72,28 @@ public class MainWindow {
             _view = CalendarNode.VIEW.DAY;
             _calendarGrid.change(_view, _date);
         });
+
+        SideBar sb = new SideBar();
+        AtomicBoolean sbVisible = new AtomicBoolean(false);
         _tagEditorButton.setOnAction(e -> {
-            System.out.println("Button meme");
+            if (sbVisible.get()) {
+                sb.hide();
+                sbVisible.set(false);
+            }
+            else {
+                sb.setBounds(_tagEditorButton.localToScreen(_tagEditorButton.getBoundsInLocal()));
+                sb.show();
+                sbVisible.set(true);
+            }
+        });
+        sb.focusedProperty().addListener((obs, what, focused) -> {
+            if (focused) {
+                sb.show();
+            }
+            else {
+                sb.hide();
+            }
+            sbVisible.set(focused);
         });
 /*
         ubImport.setOnAction(e -> {
