@@ -34,6 +34,7 @@
     -->
                    </items>
                </MenuButton>
+               <Button fx:id="_tagEditorButton" mnemonicParsing="false" text="Tag Editor"/>
                <Pane minWidth = "10.0" style="-fx-background-color: cornflowerblue;"/>
             </children>
         </HBox>

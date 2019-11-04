@@ -13,6 +13,8 @@ public class MainWindow {
     @FXML private Button _before;
     @FXML private Button _today;
     @FXML private Button _after;
+    @FXML private Button _tagEditorButton;
+
 
     @FXML private MostRecentEvent _mre;
 
@@ -68,6 +70,9 @@ public class MainWindow {
             _dotw.hide();
             _view = CalendarNode.VIEW.DAY;
             _calendarGrid.change(_view, _date);
+        });
+        _tagEditorButton.setOnAction(e -> {
+            System.out.println("Button meme");
         });
 /*
         ubImport.setOnAction(e -> {
