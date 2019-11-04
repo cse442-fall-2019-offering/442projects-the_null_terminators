@@ -24,6 +24,8 @@ public class MainWindow {
     @FXML private MenuItem _importCal;
     @FXML private MenuItem _themes;
 
+    @FXML private MenuItem _tagEditor;
+
     private LocalDate _date = LocalDate.now();
     private CalendarNode.VIEW _view = CalendarNode.VIEW.MONTH;
 
@@ -69,6 +71,10 @@ public class MainWindow {
             _dotw.hide();
             _view = CalendarNode.VIEW.DAY;
             _calendarGrid.change(_view, _date);
+        });
+
+        _tagEditor.setOnAction(e -> {
+           new EventTags();
         });
 /*
         _clearDB.setOnAction(e -> {
