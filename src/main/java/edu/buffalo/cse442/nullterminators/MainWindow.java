@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainWindow {
     @FXML private DotwNode _dotw;
@@ -25,6 +26,7 @@ public class MainWindow {
     @FXML private MenuItem _themes;
 
     @FXML private MenuItem _tagEditor;
+    @FXML private Button _sideBar;
 
     private LocalDate _date = LocalDate.now();
     private CalendarNode.VIEW _view = CalendarNode.VIEW.MONTH;
@@ -75,6 +77,29 @@ public class MainWindow {
 
         _tagEditor.setOnAction(e -> {
            new EventTags();
+        });
+
+        SideBar sb = new SideBar();
+        AtomicBoolean sbVisible = new AtomicBoolean(false);
+        _sideBar.setOnAction(e-> {
+            if (sbVisible.get()) {
+                sb.hide();
+                sbVisible.set(false);
+            }
+            else {
+                sb.setBounds(_sideBar.localToScreen(_sideBar.getBoundsInLocal()));
+                sb.show();
+                sbVisible.set(true);
+            }
+        });
+        sb.focusedProperty().addListener((obs, what, focused) -> {
+            if (focused) {
+                sb.show();
+            }
+            else {
+                sb.hide();
+            }
+            sbVisible.set(focused);
         });
 /*
         _clearDB.setOnAction(e -> {

@@ -38,6 +38,7 @@
     -->
                    </items>
                </MenuButton>
+               <Button fx:id="_sideBar" mnemonicParsing="false" text="OPTIONS.."/>
                <Pane minWidth = "10.0" style="-fx-background-color: cornflowerblue;"/>
             </children>
         </HBox>
