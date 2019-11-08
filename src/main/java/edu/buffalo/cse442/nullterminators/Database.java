@@ -24,6 +24,8 @@ public class Database {
                 + "    name text NOT NULL,\n"
                 + "    datetime datetime,\n"
                 + "    description text\n"
+                + "    recur text\n"
+                + "    notification datetime\n"
                 + ");";
         try {
             Statement statement = conn.createStatement();
