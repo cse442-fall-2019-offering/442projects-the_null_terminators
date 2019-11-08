@@ -124,7 +124,7 @@ public class Database {
         Connection conn = openConnection();
         String[] retVal = new String[6];
 
-        String sql = "SELECT * FROM events WHERE datetime > datetime('now') ORDER BY id ASC LIMIT 1";
+        String sql = "SELECT * FROM events WHERE datetime > datetime('now') ORDER BY datetime(datetime) ASC LIMIT 1";
         try {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(sql);
