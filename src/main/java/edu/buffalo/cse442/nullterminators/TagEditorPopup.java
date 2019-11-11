@@ -82,6 +82,11 @@ public class TagEditorPopup {
             tagContainer.getChildren().add(rb);
         }
 
+        Button createNewTagBtn = new Button("+");
+        createNewTagBtn.setOnAction(e -> {
+            _stage.close();
+        });
+
         Button confirm = new Button("Add Tags");
         confirm.setOnAction(e -> {
             for(Node node : tagContainer.getChildren()) {
@@ -98,7 +103,7 @@ public class TagEditorPopup {
             _stage.close();
         });
 
-        outerFrame.getChildren().addAll(tagContainer, confirm);
+        outerFrame.getChildren().addAll(tagContainer, confirm, createNewTagBtn);
 
         _stage.setScene(new Scene(outerFrame));
     }

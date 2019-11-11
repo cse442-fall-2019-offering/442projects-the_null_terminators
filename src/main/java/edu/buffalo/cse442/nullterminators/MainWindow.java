@@ -14,7 +14,7 @@ public class MainWindow {
     @FXML private Button _before;
     @FXML private Button _today;
     @FXML private Button _after;
-    @FXML private Button _tagEditorButton;
+    @FXML private Button _tagToggleButton;
 
 
     @FXML private MostRecentEvent _mre;
@@ -75,13 +75,13 @@ public class MainWindow {
 
         SideBar sb = new SideBar();
         AtomicBoolean sbVisible = new AtomicBoolean(false);
-        _tagEditorButton.setOnAction(e -> {
+        _tagToggleButton.setOnAction(e -> {
             if (sbVisible.get()) {
                 sb.hide();
                 sbVisible.set(false);
             }
             else {
-                sb.setBounds(_tagEditorButton.localToScreen(_tagEditorButton.getBoundsInLocal()));
+                sb.setBounds(_tagToggleButton.localToScreen(_tagToggleButton.getBoundsInLocal()));
                 sb.show();
                 sbVisible.set(true);
             }
