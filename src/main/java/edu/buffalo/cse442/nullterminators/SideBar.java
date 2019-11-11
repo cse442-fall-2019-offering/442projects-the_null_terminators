@@ -46,7 +46,7 @@ public class SideBar extends Stage {
 
         VBox tagContainer = new VBox();
         tagContainer.setPadding(new Insets(10,10,10,10));
-        tagContainer.setAlignment(Pos.CENTER);
+        //tagContainer.setAlignment(Pos.CENTER);
         tagContainer.setSpacing(5);
         CheckBox group = new CheckBox();
         for (Tag t : tags) {
