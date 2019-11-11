@@ -1,6 +1,7 @@
 package edu.buffalo.cse442.nullterminators;
 
-import java.awt.Color;
+
+import javafx.scene.paint.Color;
 
 public class Tag {
     private int _id;
@@ -10,7 +11,7 @@ public class Tag {
     Tag(int id, String name, String color) {
         _id = id;
         _name = name;
-        _color = Color.decode(color);
+        _color = Color.web(color);
     }
 
     public int getId() {
