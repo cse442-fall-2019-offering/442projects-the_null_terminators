@@ -4,6 +4,7 @@ import javafx.scene.control.Button;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -101,41 +102,10 @@ public class MainWindow {
             }
             sbVisible.set(focused);
         });
+        _ubImport.setOnAction(e -> {
+            new importUBWebBrowser();
+        });
 /*
-        _clearDB.setOnAction(e -> {
-            _calendarGrid.clearEvents();
-        });
- */
-
-
-/*
-        ubImport.setOnAction(e -> {
-            //new importUBCal().window();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Featuring coming soon!!");
-            alert.setHeaderText(null);
-            alert.setContentText("Feature coming soon!!");
-            alert.onShownProperty().addListener(x -> {
-                Platform.runLater(() -> alert.setResizable(false));
-            });
-            alert.showAndWait();
-        });
-
-        RESET.setOnAction(e -> {
-            System.out.println(LocalDate.now().getDayOfWeek().getValue() + " - " + LocalDate.now().getDayOfWeek());
-        });
-        importCal.setOnAction(e -> {
-            //new importCalendars().window();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Featuring coming soon!!");
-            alert.setHeaderText(null);
-            alert.setContentText("Feature coming soon!!");
-            alert.onShownProperty().addListener(x -> {
-                Platform.runLater(() -> alert.setResizable(false));
-            });
-            alert.showAndWait();
-        });
-
         themes.setOnAction(e -> {
             new Theme().openThemeEditor();
         });

@@ -15,7 +15,10 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
+
+        // TODO: uncomment when done with Duo verification
+
         Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         primaryStage.setTitle("Calendar Application");
         primaryStage.setMinWidth(1000);
@@ -27,6 +30,7 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest(e -> {
             System.exit(0);
         });
+
         /*
         Notification notification_demo = new Notification();
         notification_demo.setTitle("Project Grading");
