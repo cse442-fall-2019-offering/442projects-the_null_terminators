@@ -47,17 +47,13 @@ public class MostRecentEvent extends Pane {
         String[] e = Database.getLatestEvent();
         for (String s : e) {
             if (s == null) {
-                _dayLabel.setText("You've got no events, for like, EVER!");
+                _dayLabel.setText("You have no upcoming events!");
                 return;
             }
         }
 //        int id = Integer.parseInt(e[0]);
         String name = e[1];
 //        String details = e[3];
-
-//        int year = Integer.parseInt(e[2].substring(0,4));
-        int month = Integer.parseInt(e[2].substring(5,7));
-        int day = Integer.parseInt(e[2].substring(8,10));
         /*
         int hour = Integer.parseInt(e[2].substring(11,13));
         int minute = Integer.parseInt(e[2].substring(14,16));
@@ -65,7 +61,7 @@ public class MostRecentEvent extends Pane {
         LocalDateTime when = LocalDateTime.of(year, month, day, hour, minute);
 
         */
-        _dayLabel.setText(month + "/" + day + " - " + name);
+        _dayLabel.setText(e[2].substring(5,7) + "/" + e[2].substring(8,10) + " - " + name);
     }
 
     private class Updater extends TimerTask {
@@ -75,7 +71,7 @@ public class MostRecentEvent extends Pane {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    update();
+                    //update();
                 }
             });
         }

@@ -95,39 +95,9 @@ public class MainWindow {
             }
             sbVisible.set(focused);
         });
-/*
-        ubImport.setOnAction(e -> {
-            //new importUBCal().window();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Featuring coming soon!!");
-            alert.setHeaderText(null);
-            alert.setContentText("Feature coming soon!!");
-            alert.onShownProperty().addListener(x -> {
-                Platform.runLater(() -> alert.setResizable(false));
-            });
-            alert.showAndWait();
+        _ubImport.setOnAction(e -> {
+            new importUBWebBrowser(_calendarGrid);
         });
-
-        RESET.setOnAction(e -> {
-            System.out.println(LocalDate.now().getDayOfWeek().getValue() + " - " + LocalDate.now().getDayOfWeek());
-        });
-        importCal.setOnAction(e -> {
-            //new importCalendars().window();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Featuring coming soon!!");
-            alert.setHeaderText(null);
-            alert.setContentText("Feature coming soon!!");
-            alert.onShownProperty().addListener(x -> {
-                Platform.runLater(() -> alert.setResizable(false));
-            });
-            alert.showAndWait();
-        });
-
-        themes.setOnAction(e -> {
-            new Theme().openThemeEditor();
-        });
-
- */
     }
 
     /** if dir = -1:
@@ -139,26 +109,25 @@ public class MainWindow {
         switch(_view) {
             case MONTH: {
                 if (dir == 1) {
-                   _date = _date.plusMonths(1);
+                    _date = _date.plusMonths(1);
                 } else {
                     _date = _date.minusMonths(1);
                 }}
-                break;
+            break;
             case WEEK: {
                 if (dir == 1) {
                     _date = _date.plusWeeks(1);
                 } else {
                     _date = _date.minusWeeks(1);
                 }}
-                break;
+            break;
             case DAY: {
                 if (dir == 1) {
                     _date = _date.plusDays(1);
                 } else {
                     _date = _date.minusDays(1);
                 }}
-                break;
+            break;
         }
     }
 }
-
