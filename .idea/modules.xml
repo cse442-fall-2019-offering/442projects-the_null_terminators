@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/442projects-the_null_terminators.main.iml" filepath="$PROJECT_DIR$/.idea/modules/442projects-the_null_terminators.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/442projects-the_null_terminators.test.iml" filepath="$PROJECT_DIR$/.idea/modules/442projects-the_null_terminators.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/edu.buffalo.cse442.nullterminators.442projects-the_null_terminators.iml" filepath="$PROJECT_DIR$/.idea/modules/edu.buffalo.cse442.nullterminators.442projects-the_null_terminators.iml" />
     </modules>
   </component>
 </project>

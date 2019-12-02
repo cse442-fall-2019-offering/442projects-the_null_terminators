@@ -4,7 +4,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,15 +12,18 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EventWindow {
 
     private DateNode _parent;
-    private Event _event = new Event(-1, "", "", LocalDateTime.now());
+    private Event _event;
     private boolean _isNew;
 
 
@@ -44,8 +46,8 @@ public class EventWindow {
         Stage stage = new Stage();
         stage.setResizable(false);
 
-        stage.setWidth(511);
-        stage.setHeight(436);
+        stage.setWidth(640);
+        stage.setHeight(480);
 
         VBox frame = new VBox();                                                 // set up layout
         frame.setPadding(new Insets(10, 20, 20,20));
@@ -53,27 +55,22 @@ public class EventWindow {
         frame.setSpacing(8);
 
         Button addEvent = new Button("Add Event");
-
+        addEvent.setDisable(true);
         TextArea eventTitle = new TextArea(_event.getTitle());                  // event title
         eventTitle.setMinSize(300, 30);
         eventTitle.setMaxSize(300, 30);
         setMaxCharacters(eventTitle, 25);
-
-        if (_isNew) {
-            addEvent.setDisable(true);
-            eventTitle.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String t1, String t2) {
-                    if (t2.equals("")) {
-                        addEvent.setDisable(true);
-                    }
-                    else {
-                        addEvent.setDisable(false);
-                    }
+        eventTitle.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String t1, String t2) {
+                if (t2.equals("")) {
+                    addEvent.setDisable(true);
                 }
-            });
-        }
-
+                else {
+                    addEvent.setDisable(false);
+                }
+            }
+        });
         eventTitle.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             if (e.getCode().equals(KeyCode.ENTER)) {
                 e.consume();
@@ -82,10 +79,19 @@ public class EventWindow {
         TextArea eventDes = new TextArea(_event.getDetails());                  // event description
         eventDes.setMinSize(400, 200);
         eventDes.setMaxSize(400, 200);
+        eventDes.setWrapText(true);
         setMaxCharacters(eventDes, 500);
 
         HBox pickDateTime = new HBox();                                          // picking date
+
         DatePicker date = new DatePicker(_event.getDate());
+        // TODO: set the picker so date can be edited and the date drawn is reflected.
+        date.setDisable(true);
+        date.setOpacity(1.0);
+        date.getEditor().setOpacity(1.0);
+        date.getEditor().setFont(Font.font("arial", FontWeight.BOLD, 12));
+        date.getEditor().setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, new CornerRadii(.5), Insets.EMPTY)));
+        // ********************* //
         date.setMaxWidth(105);
         date.setValue(_event.getDate());
 
@@ -137,18 +143,53 @@ public class EventWindow {
         bspacer.setVisible(false);
         Pane spacer3 = new Pane();
         spacer3.setMinWidth(10);
-        ToggleButton recurring = new ToggleButton("Repeating..");
+        Button recurring = new Button("Repeating..");
+//        recurring.setVisible(false);
         recurring.setStyle("-fx-background-color: transparent;");
+
         RecurrentEvents recWin = new RecurrentEvents(_event);
-        recurring.setOnAction(e -> {
-            if (recurring.isSelected()) {
+
+        AtomicBoolean recWinVisible = new AtomicBoolean(false);
+        recWin.focusedProperty().addListener((observable, what, focused) -> {
+            if (focused) {
                 recurring.setStyle("-fx-background-color: lightgrey;");
-                recWin.setBounds(recurring.localToScreen(recurring.getBoundsInLocal()));
                 recWin.show();
             }
             else {
                 recurring.setStyle("-fx-background-color: transparent;");
                 recWin.hide();
+            }
+            recWinVisible.set(focused);
+        });
+
+        recurring.setOnAction(e -> {
+            if (recWinVisible.get()) {     // is hidden, need to show
+                recWin.hide();
+                recWinVisible.set(false);
+            }
+            else {
+                recWin.setBounds(recurring.localToScreen(recurring.getBoundsInLocal()));
+                recWin.show();
+                recWinVisible.set(true);
+            }
+        });
+
+        Button tagEditorBtn = new Button("Add tag to event:");
+        tagEditorBtn.setVisible(false);
+        Pane spacer4 = new Pane();
+        spacer3.setMinWidth(10);
+        ToggleButton tagEditor = new ToggleButton("Add tag to event:");
+        tagEditor.setStyle("-fx-background-color: transparent;");
+        TagEditorPopup tagpopup = new TagEditorPopup(_event);
+        tagEditor.setOnAction(e -> {
+            if (tagEditor.isSelected()) {
+                tagEditor.setStyle("-fx-background-color: lightgrey;");
+                tagpopup.setBounds(tagEditor.localToScreen(tagEditor.getBoundsInLocal()));
+                tagpopup.show();
+            }
+            else {
+                tagEditor.setStyle("-fx-background-color: transparent;");
+                tagpopup.hide();
             }
         });
 
@@ -206,10 +247,10 @@ public class EventWindow {
             box.setCenter(addEvent);
             box.setRight(delete);
 
-            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, box);
+            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, box, tagEditor);
         }
         else {
-            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, addEvent);
+            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, addEvent, tagEditor);
         }
 
         stage.setTitle("Event Editor");
@@ -218,18 +259,16 @@ public class EventWindow {
         stage.show();
         stage.setOnCloseRequest(e -> {
             recWin.close();
+            tagpopup.close();
         });
     }
 
-    public Stage getStage() {
-        return null;
-    }
     /**
      * helper function that allows a ComboBox to be modified with scrolling
      * @param box ComboBox to be modified
      */
     private void scrollToEdit(ComboBox box, int min, int max) {
-       box.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean onButton) -> {       // button shows when hovering over this DateNode's box
+        box.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean onButton) -> {       // button shows when hovering over this DateNode's box
             if (onButton) {
                 box.setOnScroll(v -> {
                     double delt = v.getDeltaY();
@@ -267,7 +306,7 @@ public class EventWindow {
         else {
             min = 0; max = 59; }
         TextField editor = box.getEditor();
-        editor.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+        editor.setOnKeyTyped(e -> {
             char val = e.getCharacter().charAt(0);
             if (editor.getText().length() > 2 || (int) val < 48 || (int) val > 57) {                   // is a number, not > 2 chars
                 editor.setText(editor.getText(0, Integer.max(editor.getText().length()-1, 0)));
@@ -275,8 +314,8 @@ public class EventWindow {
                 editor.end();
                 if (!addEventButton.isDisabled()) {
                     Timeline wait = new Timeline(
-                            new KeyFrame(Duration.ZERO, evt -> box.setStyle("-fx-border-color: red; -fx-border-width: 1px 1px 1px 1px")),
-                            new KeyFrame(Duration.seconds(.5), evt -> box.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px"))
+                            new KeyFrame(Duration.ZERO, evt -> box.setStyle("-fx-border-color: red; -fx-border-width: 1px 1px 1px 1px; -fx-font: 11 arial;")),
+                            new KeyFrame(Duration.seconds(.5), evt -> box.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px; -fx-font: 11 arial;"))
                     );
                     wait.play();
                 }
@@ -287,11 +326,11 @@ public class EventWindow {
             }
             if (p < min || p > max) {
                 addEventButton.setDisable(true);
-                box.setStyle("-fx-border-color: red; -fx-border-width: 1px 1px 1px 1px");
+                box.setStyle("-fx-border-color: red; -fx-border-width: 1px 1px 1px 1px; -fx-font: 11 arial;");
             }
             else {
                 addEventButton.setDisable(false);
-                box.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px");
+                box.setStyle("-fx-border-color: transparent; -fx-border-width: 1px 1px 1px 1px; -fx-font: 11 arial;");
             }
         });
     }
@@ -317,7 +356,7 @@ public class EventWindow {
 
         stage.close();
 
-        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText());
+        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText(), "", "", _event.getTag().getId());
         _parent.refresh();
     }
 

@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainWindow {
     @FXML private DotwNode _dotw;
@@ -13,6 +14,8 @@ public class MainWindow {
     @FXML private Button _before;
     @FXML private Button _today;
     @FXML private Button _after;
+    @FXML private Button _tagToggleButton;
+
 
     @FXML private MostRecentEvent _mre;
 
@@ -69,39 +72,32 @@ public class MainWindow {
             _view = CalendarNode.VIEW.DAY;
             _calendarGrid.change(_view, _date);
         });
-/*
-        ubImport.setOnAction(e -> {
-            //new importUBCal().window();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Featuring coming soon!!");
-            alert.setHeaderText(null);
-            alert.setContentText("Feature coming soon!!");
-            alert.onShownProperty().addListener(x -> {
-                Platform.runLater(() -> alert.setResizable(false));
-            });
-            alert.showAndWait();
-        });
 
-        RESET.setOnAction(e -> {
-            System.out.println(LocalDate.now().getDayOfWeek().getValue() + " - " + LocalDate.now().getDayOfWeek());
+        SideBar sb = new SideBar();
+        AtomicBoolean sbVisible = new AtomicBoolean(false);
+        _tagToggleButton.setOnAction(e -> {
+            if (sbVisible.get()) {
+                sb.hide();
+                sbVisible.set(false);
+            }
+            else {
+                sb.setBounds(_tagToggleButton.localToScreen(_tagToggleButton.getBoundsInLocal()));
+                sb.show();
+                sbVisible.set(true);
+            }
         });
-        importCal.setOnAction(e -> {
-            //new importCalendars().window();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Featuring coming soon!!");
-            alert.setHeaderText(null);
-            alert.setContentText("Feature coming soon!!");
-            alert.onShownProperty().addListener(x -> {
-                Platform.runLater(() -> alert.setResizable(false));
-            });
-            alert.showAndWait();
+        sb.focusedProperty().addListener((obs, what, focused) -> {
+            if (focused) {
+                sb.show();
+            }
+            else {
+                sb.hide();
+            }
+            sbVisible.set(focused);
         });
-
-        themes.setOnAction(e -> {
-            new Theme().openThemeEditor();
+        _ubImport.setOnAction(e -> {
+            new importUBWebBrowser(_calendarGrid);
         });
-
- */
     }
 
     /** if dir = -1:
@@ -113,26 +109,25 @@ public class MainWindow {
         switch(_view) {
             case MONTH: {
                 if (dir == 1) {
-                   _date = _date.plusMonths(1);
+                    _date = _date.plusMonths(1);
                 } else {
                     _date = _date.minusMonths(1);
                 }}
-                break;
+            break;
             case WEEK: {
                 if (dir == 1) {
                     _date = _date.plusWeeks(1);
                 } else {
                     _date = _date.minusWeeks(1);
                 }}
-                break;
+            break;
             case DAY: {
                 if (dir == 1) {
                     _date = _date.plusDays(1);
                 } else {
                     _date = _date.minusDays(1);
                 }}
-                break;
+            break;
         }
     }
 }
-

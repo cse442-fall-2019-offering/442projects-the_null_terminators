@@ -51,6 +51,15 @@ public class CalendarNode extends GridPane {
         setDateRange(viewOfCalendar, toDate);
     }
 
+    public void clearEvents() {
+        Database.clearDatabase();
+        for (int i = 0; i < this.getRowCount(); ++i) {
+            for (int j = 0; j < this.getColumnCount(); ++j) {
+                DateNode d = dates.get(i).get(j);
+                d.refresh();
+            }
+        }
+    }
 
     /**
      * helper function that adds constraints for the grid dependent on the view
@@ -136,6 +145,15 @@ public class CalendarNode extends GridPane {
                 else {}     // do nothing
                 calculateDateRange(firstDay);
                 break;
+        }
+    }
+
+    public void refreshChildren() {
+        for (int i = 0; i < this.getRowCount(); ++i) {
+            for (int j = 0; j < this.getColumnCount(); ++j) {
+                dates.get(i).get(j).refresh();
+            }
+
         }
     }
 

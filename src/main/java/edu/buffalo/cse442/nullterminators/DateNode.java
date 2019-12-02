@@ -34,7 +34,7 @@ public class DateNode extends AnchorPane {
         _addEvent.setTextFill(Color.DEEPSKYBLUE);
         _addEvent.setStyle("-fx-background-color: transparent; -fx-padding: 0 3 0 3;");
         _addEvent.setOnAction(e -> {
-                new EventWindow(new Event(-1, "", "", LocalDateTime.of(_date, LocalTime.of(4, 20))), this, true);
+                new EventWindow(new Event(-1, "", "", LocalDateTime.of(_date, LocalTime.of(4, 20)), null), this, true);
         });
 
         _addEvent.setOpacity(0.0);
@@ -47,7 +47,7 @@ public class DateNode extends AnchorPane {
         });
 
         _storage = new VBox();                           // vbox that holds date, add button, and events
-        this.setTopAnchor(_storage, 0.0);
+        this.setTopAnchor(_storage, 23.0);
         this.setBottomAnchor(_storage, 0.0);
         this.setRightAnchor(_storage, 0.0);
         this.setLeftAnchor(_storage, 0.0);
@@ -57,8 +57,14 @@ public class DateNode extends AnchorPane {
         HBox.setHgrow(spacer1, Priority.ALWAYS);
         date.getChildren().addAll(_dateView, spacer1, _addEvent);
 
-        _storage.getChildren().add(date);
-        this.getChildren().add(_storage);
+        this.setTopAnchor(date, 0.0);
+        this.setBottomAnchor(date, 23.0);
+        this.setLeftAnchor(date, 0.0);
+        this.setRightAnchor(date, 0.0);
+
+
+
+        this.getChildren().addAll(date, _storage);
     }
 
     /**
@@ -98,7 +104,7 @@ public class DateNode extends AnchorPane {
 //            this.setBackground(new Background(color));
         }
         _dateView.setText(" " + _date.getDayOfMonth());
-        drawEvents();
+        refresh();
     }
 
     /**
@@ -144,7 +150,7 @@ public class DateNode extends AnchorPane {
             int minute = Integer.parseInt(e[2].substring(14,16));
             LocalDateTime when = LocalDateTime.of(year, month, day, hour, minute);
 
-            Event evt = new Event(id, name, details, when);
+            Event evt = new Event(id, name, details, when, null);
             _events.add(evt);
         }
         Collections.sort(_events);
@@ -154,9 +160,7 @@ public class DateNode extends AnchorPane {
      * clears the events from the Node GUI and clears list of events
      */
     private void clearEvents() {
-        if (_storage.getChildren().size() > 1) {
-            _storage.getChildren().remove(1, _storage.getChildren().size());
-        }
+        _storage.getChildren().remove(0, _storage.getChildren().size());
         _events.clear();
     }
 
