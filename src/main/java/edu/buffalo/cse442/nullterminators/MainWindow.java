@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainWindow {
     @FXML private DotwNode _dotw;
@@ -13,6 +14,8 @@ public class MainWindow {
     @FXML private Button _before;
     @FXML private Button _today;
     @FXML private Button _after;
+    @FXML private Button _tagToggleButton;
+
 
     @FXML private MostRecentEvent _mre;
 
@@ -68,6 +71,29 @@ public class MainWindow {
             _dotw.hide();
             _view = CalendarNode.VIEW.DAY;
             _calendarGrid.change(_view, _date);
+        });
+
+        SideBar sb = new SideBar();
+        AtomicBoolean sbVisible = new AtomicBoolean(false);
+        _tagToggleButton.setOnAction(e -> {
+            if (sbVisible.get()) {
+                sb.hide();
+                sbVisible.set(false);
+            }
+            else {
+                sb.setBounds(_tagToggleButton.localToScreen(_tagToggleButton.getBoundsInLocal()));
+                sb.show();
+                sbVisible.set(true);
+            }
+        });
+        sb.focusedProperty().addListener((obs, what, focused) -> {
+            if (focused) {
+                sb.show();
+            }
+            else {
+                sb.hide();
+            }
+            sbVisible.set(focused);
         });
 /*
         ubImport.setOnAction(e -> {

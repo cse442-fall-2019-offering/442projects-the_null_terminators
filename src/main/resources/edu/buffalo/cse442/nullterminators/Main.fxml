@@ -34,6 +34,7 @@
     -->
                    </items>
                </MenuButton>
+               <Button fx:id="_tagToggleButton" mnemonicParsing="false" text="Tag Toggle"/>
                <Pane minWidth = "10.0" style="-fx-background-color: cornflowerblue;"/>
             </children>
         </HBox>

@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class EventWindow {
 
     private DateNode _parent;
-    private Event _event = new Event(-1, "", "", LocalDateTime.now());
+    private Event _event;
     private boolean _isNew;
 
 
@@ -44,8 +44,8 @@ public class EventWindow {
         Stage stage = new Stage();
         stage.setResizable(false);
 
-        stage.setWidth(511);
-        stage.setHeight(436);
+        stage.setWidth(640);
+        stage.setHeight(480);
 
         VBox frame = new VBox();                                                 // set up layout
         frame.setPadding(new Insets(10, 20, 20,20));
@@ -152,6 +152,25 @@ public class EventWindow {
             }
         });
 
+        Button tagEditorBtn = new Button("Add tag to event:");
+        tagEditorBtn.setVisible(false);
+        Pane spacer4 = new Pane();
+        spacer3.setMinWidth(10);
+        ToggleButton tagEditor = new ToggleButton("Add tag to event:");
+        tagEditor.setStyle("-fx-background-color: transparent;");
+        TagEditorPopup tagpopup = new TagEditorPopup(_event);
+        tagEditor.setOnAction(e -> {
+            if (tagEditor.isSelected()) {
+                tagEditor.setStyle("-fx-background-color: lightgrey;");
+                tagpopup.setBounds(tagEditor.localToScreen(tagEditor.getBoundsInLocal()));
+                tagpopup.show();
+            }
+            else {
+                tagEditor.setStyle("-fx-background-color: transparent;");
+                tagpopup.hide();
+            }
+        });
+
         pickDateTime.getChildren().addAll(bspacer, date, spacer1, hours, colon, minutes, spacer2, amPM, spacer3, recurring);
         pickDateTime.setAlignment(Pos.CENTER);
 
@@ -206,10 +225,10 @@ public class EventWindow {
             box.setCenter(addEvent);
             box.setRight(delete);
 
-            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, box);
+            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, box, tagEditor);
         }
         else {
-            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, addEvent);
+            frame.getChildren().addAll(titleLabel, eventTitle, pickDateTime, descLabel, eventDes, addEvent, tagEditor);
         }
 
         stage.setTitle("Event Editor");
@@ -218,6 +237,7 @@ public class EventWindow {
         stage.show();
         stage.setOnCloseRequest(e -> {
             recWin.close();
+            tagpopup.close();
         });
     }
 
@@ -317,7 +337,7 @@ public class EventWindow {
 
         stage.close();
 
-        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText());
+        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText(), "", "", _event.getTag().getId());
         _parent.refresh();
     }
 

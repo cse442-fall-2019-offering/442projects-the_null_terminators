@@ -34,7 +34,7 @@ public class DateNode extends AnchorPane {
         _addEvent.setTextFill(Color.DEEPSKYBLUE);
         _addEvent.setStyle("-fx-background-color: transparent; -fx-padding: 0 3 0 3;");
         _addEvent.setOnAction(e -> {
-                new EventWindow(new Event(-1, "", "", LocalDateTime.of(_date, LocalTime.of(4, 20))), this, true);
+                new EventWindow(new Event(-1, "", "", LocalDateTime.of(_date, LocalTime.of(4, 20)), null), this, true);
         });
 
         _addEvent.setOpacity(0.0);
@@ -144,7 +144,7 @@ public class DateNode extends AnchorPane {
             int minute = Integer.parseInt(e[2].substring(14,16));
             LocalDateTime when = LocalDateTime.of(year, month, day, hour, minute);
 
-            Event evt = new Event(id, name, details, when);
+            Event evt = new Event(id, name, details, when, null);
             _events.add(evt);
         }
         Collections.sort(_events);
