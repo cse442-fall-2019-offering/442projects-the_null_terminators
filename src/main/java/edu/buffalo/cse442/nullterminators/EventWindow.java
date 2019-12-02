@@ -245,7 +245,7 @@ public class EventWindow {
      * @param box ComboBox to be modified
      */
     private void scrollToEdit(ComboBox box, int min, int max) {
-       box.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean onButton) -> {       // button shows when hovering over this DateNode's box
+        box.hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean onButton) -> {       // button shows when hovering over this DateNode's box
             if (onButton) {
                 box.setOnScroll(v -> {
                     double delt = v.getDeltaY();
@@ -333,7 +333,8 @@ public class EventWindow {
 
         stage.close();
 
-        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText());
+        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText(), "", "", 0);
+        // TODO: temporary VALUES, need to fix
         _parent.refresh();
     }
 

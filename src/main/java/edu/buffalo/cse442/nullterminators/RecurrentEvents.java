@@ -1,7 +1,5 @@
 package edu.buffalo.cse442.nullterminators;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -61,6 +59,7 @@ public class RecurrentEvents extends Stage {
             CheckBox cb = new CheckBox(s);
             cb.setIndeterminate(false);
             // TODO: add listeners to date checkboxes
+
             dateFrame.getChildren().add(cb);
         }
 
