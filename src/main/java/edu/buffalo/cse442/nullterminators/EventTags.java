@@ -1,5 +1,6 @@
 package edu.buffalo.cse442.nullterminators;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -34,6 +35,10 @@ public class EventTags extends Stage {
         this.setResizable(false);
         this.setWidth(400);
         this.setHeight(300);
+        this.setResizable(true);
+        this.onShownProperty().addListener(e -> {
+            Platform.runLater(() -> this.setResizable(false));
+        });
 
         HBox frame = new HBox();
         frame.setSpacing(20);
