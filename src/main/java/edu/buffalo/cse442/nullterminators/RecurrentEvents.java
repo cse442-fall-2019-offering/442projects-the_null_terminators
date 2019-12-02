@@ -1,7 +1,5 @@
 package edu.buffalo.cse442.nullterminators;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,15 +10,20 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class RecurrentEvents extends Stage {
     final double width = 398.0;
-    private Event _event = new Event(-1, "", "", LocalDateTime.now());
     private Bounds _loc;
 
+    private Event _evt;
+    private ArrayList<CheckBox> _cbArray = new ArrayList<>();
+    private DatePicker _from;
+    private DatePicker _until;
+
     public RecurrentEvents(Event evt) {
-        _event = evt;
+        _evt = evt;
         setup();
     }
 
@@ -45,13 +48,13 @@ public class RecurrentEvents extends Stage {
         HBox freqFrame = new HBox();
         freqFrame.setAlignment(Pos.CENTER);
         freqFrame.setSpacing(5);
-        DatePicker from = new DatePicker();
-        from.setMaxWidth(105);
-        from.setValue(_event.getDate());
-        DatePicker until = new DatePicker();
-        until.setMaxWidth(105);
-        until.setValue(_event.getDate());
-        freqFrame.getChildren().addAll(new Label("From "), from, new Label(" until "), until);
+        _from = new DatePicker();
+        _from.setMaxWidth(105);
+        _from.setValue(_evt.getDate());
+        _until = new DatePicker();
+        _until.setMaxWidth(105);
+        _until.setValue(_evt.getDate());
+        freqFrame.getChildren().addAll(new Label("From "), _from, new Label(" until "), _until);
 
         HBox dateFrame = new HBox();
         dateFrame.setAlignment(Pos.CENTER);
@@ -60,18 +63,46 @@ public class RecurrentEvents extends Stage {
         for (String s : dotw) {
             CheckBox cb = new CheckBox(s);
             cb.setIndeterminate(false);
-            // TODO: add listeners to date checkboxes
+            _cbArray.add(cb);
             dateFrame.getChildren().add(cb);
         }
 
-        Button confirm = new Button("Confirm");
-        confirm.setOnAction(e -> {
-            // TODO: add listener to confirm button, sends values to the opened event window
-            this.close();
+        Button reset = new Button("RESET");
+        reset.setTextFill(Color.RED);
+        reset.setStyle("-fx-background-color: transparent;");
+        reset.setOnAction(e -> {
+            for (CheckBox cb : _cbArray) {
+                cb.setSelected(false);
+            }
+            _from.setValue(_evt.getDate());
+            _until.setValue(_evt.getDate());
         });
 
-        outerFrame.getChildren().addAll(freqFrame, dateFrame, confirm);
+
+        HBox resetFrame = new HBox();
+        resetFrame.setAlignment(Pos.CENTER_RIGHT);
+        resetFrame.getChildren().add(reset);
+
+        outerFrame.getChildren().addAll(freqFrame, dateFrame, resetFrame);
 
         this.setScene(new Scene(outerFrame));
+    }
+
+    public Recur getRecur() {
+        Recur ret = new Recur();
+
+        ret.setFrom(_from.getValue());
+        ret.setUntil(_until.getValue());
+        String dotw = "";
+        for (CheckBox cb : _cbArray) {
+            if (cb.isSelected()) {
+                dotw = dotw + "1";
+            }
+            else {
+                dotw = dotw + "0";
+            }
+        }
+        ret.setDOTW(dotw);
+        return ret;
     }
 }

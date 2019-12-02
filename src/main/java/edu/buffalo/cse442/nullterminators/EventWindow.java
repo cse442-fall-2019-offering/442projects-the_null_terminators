@@ -26,7 +26,7 @@ public class EventWindow {
     private Event _event = new Event(-1, "", "", LocalDateTime.now());
     private boolean _isNew;
 
-
+    private RecurrentEvents recWin;
 
     /**
      * constructor for initializing event window
@@ -144,7 +144,7 @@ public class EventWindow {
 //        recurring.setVisible(false);
         recurring.setStyle("-fx-background-color: transparent;");
 
-        RecurrentEvents recWin = new RecurrentEvents(_event);
+        recWin = new RecurrentEvents(_event);
 
         AtomicBoolean recWinVisible = new AtomicBoolean(false);
         recWin.focusedProperty().addListener((observable, what, focused) -> {
@@ -333,8 +333,20 @@ public class EventWindow {
 
         stage.close();
 
-        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText());
+        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText(), recurringEvent(), "", 0);
         _parent.refresh();
+    }
+
+    /**
+     * Returns empty string if not recurring event, else, returns a string to be added into the database.
+     */
+    private String recurringEvent() {
+        Recur rec = recWin.getRecur();
+        if (rec.getDOTW().equals("0000000")) {
+            return "";
+        }
+        System.out.print(rec.toString());
+        return rec.toString();
     }
 
     /**
