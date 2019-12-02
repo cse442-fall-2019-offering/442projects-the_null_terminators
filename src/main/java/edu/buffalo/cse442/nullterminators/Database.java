@@ -372,4 +372,20 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
+
+    // Deletes all tags from the database
+    // BE CAREFUL
+    public static void clearTags() {
+        Connection conn = openConnection();
+
+        String sql = "DELETE FROM tags";
+
+        try {
+            Statement statement = conn.createStatement();
+            statement.execute(sql);
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
