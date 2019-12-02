@@ -317,7 +317,7 @@ public class EventWindow {
 
         stage.close();
 
-        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText());
+        Database.addEvent(t.getText(), when.toLocalDate() + " " + when.toLocalTime(), d.getText(), "", "", -1);
         _parent.refresh();
     }
 

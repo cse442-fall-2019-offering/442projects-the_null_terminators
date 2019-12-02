@@ -99,6 +99,7 @@ public class DateNode extends AnchorPane {
         }
         _dateView.setText(" " + _date.getDayOfMonth());
         drawEvents();
+        refresh();
     }
 
     /**
