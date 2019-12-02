@@ -148,4 +148,13 @@ public class CalendarNode extends GridPane {
         }
     }
 
+    public void refreshChildren() {
+        for (int i = 0; i < this.getRowCount(); ++i) {
+            for (int j = 0; j < this.getColumnCount(); ++j) {
+                dates.get(i).get(j).refresh();
+            }
+
+        }
+    }
+
 }

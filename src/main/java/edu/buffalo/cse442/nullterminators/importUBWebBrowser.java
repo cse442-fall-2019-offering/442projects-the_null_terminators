@@ -9,12 +9,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -22,71 +24,139 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class importUBWebBrowser {
+    private CalendarNode _cn;
     private class Course {
         String name = "";
 
-        String dateRange = "";
+        LocalDate dateStart;
+        LocalDate dateEnd;
 
         String dotw = "";
         String dotwStrRep = "";
 
         LocalTime timeStart;
-        String timeStartStr;
-
         LocalTime timeEnd;
-        String timeEndStr;
+
         String location = "";
     }
 
-    public importUBWebBrowser() {
-        scrape();
+    private ArrayList<Course> _courses;
+    private String _notAdded;
+
+    public importUBWebBrowser(CalendarNode cn) {
+        _cn = cn;
+        choose();
     }
 
-    public void scrape() {
+    /**
+     * set up for GUI to show options - import a new class schedule, or edit the exising one.
+     */
+    private void choose() {
+        Stage stage = new Stage();
+        stage.setTitle("Class Schedule Settings");
+        VBox frame = new VBox();
+        frame.setAlignment(Pos.CENTER);
+        frame.setSpacing(5);
+        frame.setPadding(new Insets(10,10,10,10));
+
+        Button openBrowser = new Button("Import Class Schedule!");
+        openBrowser.setOnAction(e -> {
+            grabHTML();
+            stage.close();
+        });
+
+        Button remClass = new Button("Remove Class Schedule");
+        remClass.setOnAction(e -> {
+            this.removeSchedule();
+            stage.close();
+        });
+
+        Pane spacer = new Pane();
+        spacer.setMinHeight(10);
+
+        Button examSched = new Button("Import Exam Schedule!");
+        examSched.setOnAction(e -> {
+            (new importUBExam(_cn)).openBrowser();
+            stage.close();
+        });
+
+        Button remExams = new Button("Remove Exam Schedule");
+        remExams.setOnAction(e -> {
+            (new importUBExam(_cn)).removeExams();
+            stage.close();
+        });
+
+
+
+        frame.getChildren().addAll(new Label("What would you like to do?"), openBrowser, remClass, spacer, examSched, remExams);
+        stage.setScene(new Scene(frame));
+        stage.show();
+    }
+
+    /**
+     * opens up browser, grabs HTML when Class Schedule page comes up
+     * the parse call is WITHIN this function
+     */
+    private void grabHTML() {
+        ArrayList<String[]> check = Database.getEventsByTag(70);
+        if (!check.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Schedule Already Exists!");
+            alert.setHeaderText(null);
+            alert.setContentText("You already have an existing class schedule - if you want to add another, remove your current schedule and try again");
+            alert.showAndWait();
+            return;
+        }
+
         Stage stage = new Stage();
         stage.setTitle("Import your UB Calendar..");
         String destURL = "https://www.ss.hub.buffalo.edu/psc/csprdss_2/EMPLOYEE/HRMS/c/SSR_STUDENT_FL.SSR_MD_SP_FL.GBL?Action=U&MD=Y&GMenu=SSR_STUDENT_FL&GComp=SSR_START_PAGE_FL&GPage=SSR_START_PAGE_FL&scname=CS_SSR_MANAGE_CLASSES_NAV&AJAXTransfer=y&ICAJAXTrf=true";
-
         WebView browser = new WebView();
         WebEngine webEngine = browser.getEngine();
         webEngine.load(destURL);
+
+        _courses = new ArrayList<>();
+
+        AtomicBoolean found = new AtomicBoolean(false);
         webEngine.getLoadWorker().stateProperty().addListener((change, oldState, newState) -> {
-            if (newState == Worker.State.SUCCEEDED) {
-                if (webEngine.getLocation().equals(destURL + "&")) {        // "Manage Classes" page
-                    LocalTime stop = LocalTime.now().plusSeconds(30);
-                    Timer t = new Timer();
-                    TimerTask tt = new TimerTask() {
-                        @Override
-                        public void run() {
-                            Platform.runLater(() -> {
-                                String html = (String) webEngine.executeScript("document.documentElement.outerHTML");
-                                if (html.contains("<div class=\"ps_box-scrollarea-row\" id=\"win2divSSR_SBJCT_LVL1")) {
+         //   if (newState == Worker.State.SUCCEEDED) {
+                LocalTime stop = LocalTime.now().plusSeconds(30);
+                Timer t = new Timer();
+                TimerTask tt = new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            String html = (String) webEngine.executeScript("document.documentElement.outerHTML");
+                            if (html.contains("win2divSSR_SBJCT_LVL1")) {
+                                if (!found.get()) {
+                                    found.set(true);
                                     t.cancel();
-                                    String parsed = ListtoString(parse(html));
-                                    confirm(parsed);
+                                    parse(html);
                                     stage.close();
                                 }
-                                if (stop.isBefore(LocalTime.now())) {
-                                    t.cancel();
-                                }
-                            });
-                        }
-                    };
-                    t.schedule(tt, 1000, 1000);
-                }
-            }
+                            }
+                            if (stop.isBefore(LocalTime.now())) {
+                                t.cancel();
+                            }
+
+                        });
+                    }
+                };
+                t.schedule(tt, 1000, 1000);
+         //   }
         });
 
         stage.setScene(new Scene(browser));
         stage.show();
     }
 
-    private ArrayList<Course> parse(String html) {
+    private void parse(String html) {
+        // Divide each of the classes up into substrings (simplicity?)
         ArrayList<String> split = new ArrayList<>();
-        // SEPARATE EACH OF THE CLASSES
-        String target = "<div class=\"ps_box-scrollarea-row\" id=\"win2divSSR_SBJCT_LVL1_row$";
+        String target = "win2divSSR_SBJCT_LVL1_row$";
         int start = 0, end = 0;
         while (start != -1 && end != -1) {
             start = html.indexOf(target, end);
@@ -101,10 +171,11 @@ public class importUBWebBrowser {
             split.add(add);
         }
 
-        ArrayList<Course> courses = new ArrayList<>();
-        // FIND AND PARSE
+        _courses = new ArrayList<>();
+        _notAdded = "";
+        // Parse course name, date, time, and location for each split.
         for (String s : split) {
-            int i = 0;
+            int i = 0;  // current position
             boolean hasRecitation = false;
 
             // Course name, like CSE368
@@ -114,6 +185,7 @@ public class importUBWebBrowser {
             }
             name = name.substring(0, 6);
 
+            // Decide if the course has a recitation or not
             String[] ordering = {"LEC", "REC"};
             int runs = 1;
             if (hasRecitation) {
@@ -123,15 +195,25 @@ public class importUBWebBrowser {
                 }
                 runs = 2;
             }
+
             for (int x = 0; x < runs; ++x) {
                 Course c = new Course();
                 i = s.indexOf("Class Nbr", i);
                 // Lecture or Recitation
                 c.name = name + ordering[x];
 
-                // Date Range
+
+                // Date Range (MM/dd/yyyy to MM/dd/yyyy)
                 i = s.indexOf("Start/End Dates   ", i) + "Start/End Dates   ".length();
-                c.dateRange = s.substring(i, s.indexOf('\n', i));
+
+                c.dateStart = StringToDate(s.substring(i, s.indexOf(' ', i)));
+                i = s.indexOf("- ", i) + "- ".length();
+                int eol = s.indexOf(' ', i);
+                if (s.indexOf('\n', i) < eol) {
+                    eol = s.indexOf('\n', i);
+                }
+                c.dateEnd = StringToDate(s.substring(i, s.indexOf(' ', eol)));
+
 
                 // Days of the Week (Monday, Tuesday, Wednesday, Thursday, Friday)
                 i = s.indexOf("Days: ", i) + "Days: ".length();
@@ -139,13 +221,18 @@ public class importUBWebBrowser {
                 c.dotw = dotwShort(dotw);
                 c.dotwStrRep = dotw;
 
-                // Time
+                // Time of Class (hh:mma - hh:mma)
                 DateTimeFormatter oneDig = DateTimeFormatter.ofPattern("hh:mma", Locale.US);
                 DateTimeFormatter twoDig = DateTimeFormatter.ofPattern("h:mma", Locale.US);
 
                 i = s.indexOf("Times: ", i) + "Times: ".length();
+                String timeLine = s.substring(i, s.indexOf('\n', i));       // Grab the current line
+                if (timeLine.contains("To be Announced")) {
+                    _notAdded = _notAdded + c.name + "\n    ";
+                    continue;
+                }
+
                 String timeStart = s.substring(i, s.indexOf(' ', i));
-                c.timeStartStr = timeStart;
                 try {
                     c.timeStart = LocalTime.parse(timeStart, oneDig);
                 } catch (DateTimeParseException dtpe) {
@@ -153,12 +240,11 @@ public class importUBWebBrowser {
                 }
 
                 i = s.indexOf("to ", i) + "to ".length();
-                int eol = s.indexOf(' ', i);
+                eol = s.indexOf(' ', i);
                 if (s.indexOf('\n', i) < eol) {
                     eol = s.indexOf('\n', i);
                 }
                 String timeEnd = s.substring(i, eol);
-                c.timeEndStr = timeEnd;
                 try {
                     c.timeEnd = LocalTime.parse(timeEnd, oneDig);
                 } catch (DateTimeParseException dtpe) {
@@ -170,13 +256,13 @@ public class importUBWebBrowser {
                 i = s.indexOf("Room   ", i) + "Room   ".length();
                 String location = s.substring(i, s.indexOf('\n', i));
                 c.location = location;
-                courses.add(c);
+                _courses.add(c);
             }
         }
-        return courses;
+        confirm();
     }
 
-    private void confirm(String parsed) {
+    private void confirm() {
         Stage stage = new Stage();
         stage.setMaxHeight(500);
         stage.setMaxWidth(750);
@@ -193,9 +279,9 @@ public class importUBWebBrowser {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("----- TO BE IMPLEMENTED -----");
             alert.setHeaderText(null);
-            alert.setContentText("----- TO BE IMPLEMENTED -----");
+            alert.setContentText("Temporary, separate values added to the database, waiting on recurrent event functionality for.. linkage.. odd word.. linkage..");
             alert.showAndWait();
-
+            addSchedule(_courses);
             stage.close();
         });
 
@@ -206,7 +292,17 @@ public class importUBWebBrowser {
         userInput.setAlignment(Pos.CENTER);
         userInput.getChildren().addAll(confirm, cancel);
 
-        frame.getChildren().addAll(new Label("These classes will be added to your calendar:"), new Label(parsed), userInput);
+
+        Label notToBeAdded = new Label("Classes NOT to be added:\n" + _notAdded);
+        if (_notAdded.equals("")) {
+            notToBeAdded = new Label("");
+        }
+
+        frame.getChildren().addAll(
+                new Label("These classes will be added to your calendar:"),
+                new Label(ListtoString(_courses)),
+                notToBeAdded,
+                userInput);
         stage.setScene(new Scene(frame));
         stage.show();
     }
@@ -263,11 +359,113 @@ public class importUBWebBrowser {
         String ret = "";
         for (Course c : list) {
             ret = ret + c.name + '\n';
-            ret = ret + "        RANGE: " + c.dateRange + '\n';
+            ret = ret + "        RANGE: " + c.dateStart + " - " + c.dateEnd + '\n';
             ret = ret + "        DOTW: " + c.dotwStrRep + '\n';
-            ret = ret + "        TIME: " + c.timeStartStr + " - " + c.timeEndStr + '\n';
+            ret = ret + "        TIME: " + TimeToAMPM(c.timeStart) + " - " + TimeToAMPM(c.timeEnd) + '\n';
             ret = ret + "        LOC:  " + c.location + "\n";
         }
         return ret;
+    }
+
+    private LocalDate StringToDate(String s) {
+        DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("MM/d/yyyy");
+        DateTimeFormatter dtf3 = DateTimeFormatter.ofPattern("M/dd/yyyy");
+        DateTimeFormatter dtf4 = DateTimeFormatter.ofPattern("M/d/yyyy");
+
+        LocalDate ret = LocalDate.now();
+        try {
+            ret = LocalDate.parse(s, dtf1);
+        } catch (DateTimeParseException dtpe1) {
+            try {
+                ret = LocalDate.parse(s, dtf2);
+            } catch (DateTimeParseException dtpe2) {
+                try {
+                    ret = LocalDate.parse(s, dtf3);
+                } catch (DateTimeParseException dtpe3) {
+                    ret = LocalDate.parse(s, dtf4);
+                }
+            }
+        }
+        return ret;
+    }
+
+    private String TimeToAMPM(LocalTime t) {
+        String pattern = "hh:mma";
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(pattern);
+        return t.format(dateFormat);
+    }
+
+    /**
+     * TODO: this method is not at all efficient, but it's temporary and will add events to calendar
+     * Yeah this method is completely disgusting, don't.. just don't. this CANNOT BE IN THE FINAL PROJECT.
+     * PLEASE. DO NOT. PLEASE.
+     *
+     * IT IS TEMPORARY. I REPEAT. IT IS TEMPORARY. TEMPORARY.
+     * @param list
+     */
+    private void addSchedule(ArrayList<Course> list) {
+        for (Course c : list) {
+            String title = c.name;
+            String description =
+                    "Location: " + c.location + '\n'
+                    + c.dateStart + " - " + c.dateEnd + '\n';
+            // TODO: possibly modify this so there isn't only two mf things in the description
+
+            for (LocalDate i = c.dateStart; i.isBefore(c.dateEnd); i = i.plusDays(1)) {     // for every day from start to end
+                int monthInt = i.getMonthValue();
+                int dayInt = i.getDayOfMonth();
+                String month = Integer.toString(monthInt);
+                String day = Integer.toString(dayInt);
+
+                if (monthInt < 10) {
+                    month = "0" + month;
+                }
+                if (dayInt < 10) {
+                    day = "0" + day;
+                }
+
+                String datetime = i.getYear() + "-" + month + "-" + day + " " + c.timeStart;
+                String dotw = i.getDayOfWeek().toString();
+                char dotwShort = ' ';
+                if (dotw.equals("SUNDAY")) {                // again.. TEMPORARY, changes String to characters of Course days
+                    dotwShort = 'U';
+                } else if (dotw.equals("MONDAY")) {
+                    dotwShort = 'M';
+                } else if (dotw.equals("TUESDAY")) {
+                    dotwShort = 'T';
+                } else if (dotw.equals("WEDNESDAY")) {
+                    dotwShort = 'W';
+                } else if (dotw.equals("THURSDAY")) {
+                    dotwShort = 'R';
+                } else if (dotw.equals("FRIDAY")) {
+                    dotwShort = 'F';
+                } else if (dotw.equals("SATURDAY")) {
+                    dotwShort = 'S';
+                }
+
+                if (c.dotw.contains(dotwShort + "")) {      // again.. VERY TEMPORARY
+                    Database.addEvent(title, datetime, description, "", "", 70);
+                }
+            }
+        }
+        _cn.refreshChildren();
+    }
+
+    private void removeSchedule() {
+        ArrayList<String[]> res = Database.getEventsByTag(70);
+
+        if (res.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("There's no schedule to remove!");
+            alert.setHeaderText(null);
+            alert.setContentText("Add your schedule and try again (if you want it removed)!");
+            alert.showAndWait();
+            return;
+        }
+        for (String[] s : res) {
+            Database.deleteEvent(Integer.parseInt(s[0]));
+        }
+        _cn.refreshChildren();
     }
 }

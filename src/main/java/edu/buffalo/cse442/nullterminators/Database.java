@@ -16,7 +16,7 @@ public class Database {
         try {
             conn = DriverManager.getConnection(url);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("openConnection(): " + e.getMessage());
         }
 
         String sql = "CREATE TABLE IF NOT EXISTS events (\n"
@@ -32,7 +32,7 @@ public class Database {
             Statement statement = conn.createStatement();
             statement.execute(sql);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("openConnection(): " + e.getMessage());
         }
 
         sql = "CREATE TABLE IF NOT EXISTS tags (\n"
@@ -44,7 +44,7 @@ public class Database {
             Statement statement = conn.createStatement();
             statement.execute(sql);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("openConnection(): " + e.getMessage());
         }
 
         return conn;
@@ -69,7 +69,7 @@ public class Database {
             statement.executeUpdate();
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("addEvent(): " + e.getMessage());
             return -1;
         }
         return getLatestEventID();
@@ -86,7 +86,7 @@ public class Database {
             id = rs.getInt("id");
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("getLatestEventID(): " + e.getMessage());
         }
         return id;
     }
@@ -112,7 +112,7 @@ public class Database {
             }
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("getLatestEvent(): " + e.getMessage());
         }
         return retVal;
     }
@@ -138,7 +138,7 @@ public class Database {
             }
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("getNextEvent(): " + e.getMessage());
         }
         return retVal;
     }
@@ -164,7 +164,7 @@ public class Database {
             }
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("getNextNotification(): " + e.getMessage());
         }
         return retVal;
     }
@@ -195,7 +195,7 @@ public class Database {
             }
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("getEvents(): " + e.getMessage());
         }
         return retVal;
     }
@@ -225,7 +225,7 @@ public class Database {
             }
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("getEventsByTag(): " + e.getMessage());
         }
         return retVal;
     }
@@ -252,7 +252,7 @@ public class Database {
             }
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("getRecurrentEvents(): " + e.getMessage());
         }
         return retVal;
     }
@@ -270,7 +270,7 @@ public class Database {
             statement.executeUpdate();
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("deleteEvent(): " + e.getMessage());
             return false;
         }
         return true;
@@ -287,7 +287,7 @@ public class Database {
             id = rs.getInt("id");
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("getLatestTagID(): " + e.getMessage());
         }
         return id;
     }
@@ -307,7 +307,7 @@ public class Database {
             statement.executeUpdate();
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("addTag(): " + e.getMessage());
             return -1;
         }
         return getLatestTagID();
@@ -333,7 +333,7 @@ public class Database {
             }
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("getTags(): " + e.getMessage());
         }
         return retVal;
     }
@@ -351,7 +351,7 @@ public class Database {
             statement.executeUpdate();
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("deleteTag(): " + e.getMessage());
             return false;
         }
         return true;
@@ -369,7 +369,7 @@ public class Database {
             statement.execute(sql);
             conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("clearDatabase(): " + e.getMessage());
         }
     }
 }

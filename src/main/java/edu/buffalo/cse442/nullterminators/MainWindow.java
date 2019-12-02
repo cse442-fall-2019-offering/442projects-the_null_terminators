@@ -4,7 +4,6 @@ import javafx.scene.control.Button;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -103,7 +102,7 @@ public class MainWindow {
             sbVisible.set(focused);
         });
         _ubImport.setOnAction(e -> {
-            new importUBWebBrowser();
+            new importUBWebBrowser(_calendarGrid);
         });
 /*
         themes.setOnAction(e -> {
