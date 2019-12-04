@@ -1,11 +1,14 @@
 package edu.buffalo.cse442.nullterminators;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
@@ -23,6 +26,13 @@ public class Main extends Application {
 
         ArrayList<String> everyDate = hollis.getDates();
 
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
 
         ArrayList<String[]> lastEventArray = Database.getEventsByTag(200);
         if (lastEventArray.isEmpty()) {

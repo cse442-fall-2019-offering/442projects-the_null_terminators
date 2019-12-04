@@ -32,6 +32,9 @@ public class EventWindow {
      * constructor for initializing event window
      */
     public EventWindow(Event event, DateNode parent, boolean isNew) {
+        if(event.getTag() == null) {
+            event.setTag(new Tag(-1, "", new Color(0,0,0,0).toString()));
+        }
         _event = event;
         _parent = parent;
         _isNew = isNew;

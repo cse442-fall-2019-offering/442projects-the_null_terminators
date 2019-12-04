@@ -5,3 +5,4 @@ build/
 .idea/modules/442projects-the_null_terminators.main.iml
 .idea/modules/442projects-the_null_terminators.test.iml
 calendar.db
+bin/

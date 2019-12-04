@@ -1,8 +1,13 @@
 package edu.buffalo.cse442.nullterminators;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Holiday {
     private File _hFile;
@@ -10,8 +15,9 @@ public class Holiday {
 
     public Holiday() {
         try {
-            _hFile = new File("src/main/resources/edu/buffalo/cse442/nullterminators/holidays.txt");
-            _HOLIDAY_MASTER = new String(Files.readAllBytes(_hFile.toPath()));
+            InputStream in = getClass().getResourceAsStream("holidays.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            _HOLIDAY_MASTER = reader.lines().collect(Collectors.joining());
         }
 
         catch (Exception FileNotFoundException) {
